@@ -1,5 +1,5 @@
 # SLASH
-High preformance distributed nearest neighbor system using LSH and sketching.
+High performance distributed nearest neighbor system using LSH and sketching.
 
 ## Development
 1. Clone this repository
