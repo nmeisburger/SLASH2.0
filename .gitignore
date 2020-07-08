@@ -1,0 +1,10 @@
+.vscode 
+.out
+./scratch
+scratch
+
+./build
+build
+
+./lib
+lib
