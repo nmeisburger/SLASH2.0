@@ -1,5 +1,5 @@
 # SLASH
-Model and Data Parallel Distributed Deep Learning System for Sparse activations and Gradients using hashing.
+High performance distributed nearest neighbor system using LSH and sketching.
 
 ## Development
 1. Clone this repository
