@@ -1,51 +1,54 @@
 #pragma once
 
+#include <omp.h>
+#include <stdint.h>
+
 #include <algorithm>
 #include <experimental/random>
 #include <iostream>
 #include <numeric>
-#include <omp.h>
-#include <stdint.h>
 #include <unordered_map>
 #include <vector>
 
+class LSHTestFixture;
+
 struct Item {
-    uint32_t item;
-    uint32_t cnt;
+  uint32_t item;
+  uint32_t cnt;
 };
 
 class LSH {
-  private:
-    uint32_t L;
-    uint32_t reservoir_size;
-    uint32_t range_pow;
-    uint32_t range;
+  friend class LSHTestFixture;
 
-    uint32_t max_rand;
-    uint32_t *gen_rand;
+ private:
+  uint64_t numTables_;
+  uint64_t reservoirSize_;
+  uint64_t rangePow_;
+  uint64_t range_;
 
-    uint32_t *all_reservoir_data;
-    uint32_t **reservoirs;
-    omp_lock_t *reservoir_locks;
+  uint64_t maxRand_;
+  uint32_t* genRand_;
 
-  public:
-    static constexpr uint32_t Empty = -1;
+  uint32_t* allReservoirData_;
+  uint32_t** reservoirs_;
+  omp_lock_t* reservoirLocks_;
 
-    LSH(uint32_t num_tables, uint32_t reservoir_size, uint32_t range_pow, uint32_t max_rand);
+ public:
+  static constexpr uint32_t Empty = -1;
 
-    void insert(uint32_t num_items, uint32_t **hashes, uint32_t *items);
+  LSH(uint32_t numTables, uint32_t reservoirSize, uint32_t rangePow, uint32_t maxRand);
 
-    void insert(uint32_t *hashes, uint32_t item);
+  void insertBatch(uint64_t numItems, uint32_t* ids, uint32_t* hashes);
 
-    void retrieve(uint32_t num_query, uint32_t **hashes, uint32_t *results_buffer);
+  void insertRangedBatch(uint64_t numItems, uint32_t start, uint32_t* hashes);
 
-    Item *topK(uint32_t num_query, uint32_t top_k, uint32_t **hashes);
+  uint32_t** queryReservoirs(uint64_t numItems, uint32_t* hashes);
 
-    void reset();
+  Item* queryTopK(uint64_t numItems, uint32_t* hashes, uint64_t k);
 
-    void view();
+  void reset();
 
-    void add_random_items(uint32_t num_items, bool verbose);
+  void view();
 
-    ~LSH();
+  ~LSH();
 };
