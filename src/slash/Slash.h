@@ -31,7 +31,7 @@ class Slash {
 
   void add(string filename, uint64_t numItems, uint64_t batchSize, uint64_t offset = 0);
 
-  void add(vector<string> filenames, uint64_t numItemsPerFile, uint64_t batchSize);
+  void add(vector<string> &&filenames, uint64_t numItemsPerFile, uint64_t batchSize);
 
   uint32_t *distributedTopK(string filename, uint64_t numQueries, uint64_t k, uint64_t offset = 0);
 
