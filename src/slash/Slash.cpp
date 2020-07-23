@@ -1,89 +1,44 @@
-// #include "Slash.h"
+#include "Slash.h"
 
-// void Slash::store(vector<pair<string, uint32_t>> &imagesAndIds) {
+void Slash::store(string filename, uint64_t numItems, uint64_t batchSize, uint32_t avgDim,
+                  uint64_t offset) {
+  auto p = partition(numItems);
 
-//     size_t len = imagesAndIds.size() / worldSize_;
-//     if (rank_ < (imagesAndIds.size() % worldSize_)) {
-//         len++;
-//     }
+  uint64_t myLen = p.first[rank_];
+  uint64_t myOffset = p.second[rank_];
 
-//     uint32_t *ids = new uint32_t[len];
-//     uint32_t **hashes = new uint32_t *[len];
+  std::unique_ptr<Reader> reader = std::make_unique<Reader>(filename, avgDim, myOffset);
 
-//     size_t offset =
-//         imagesAndIds.size() / worldSize_ + min((size_t)rank_, (imagesAndIds.size() %
-//         worldSize_));
+  auto data = reader->readSparse(myLen);
 
-// #pragma omp parallel for default(none) shared(imagesAndIds, ids, hashes, len, offset)
-//     for (size_t i = 0; i < len; i++) {
-//         hashes[i] = imageProcessor_(imagesAndIds[i + offset].first);
-//         ids[i] = imagesAndIds[i + offset].second;
-//     }
+  uint32_t *hashIndices = new uint32_t[numItems * numTables_];
 
-//     lsh_->insert(len, hashes, ids);
+  doph_->getHashes(hashIndices, data.indices, data.markers, myLen);
 
-//     for (size_t i = 0; i < len; i++) {
-//         delete[] hashes[i];
-//     }
-//     delete[] ids;
-//     delete[] hashes;
-// }
+  lsh_->insertRangedBatch(myLen, myOffset, hashIndices);
 
-// Item *Slash::query(vector<string> &queries, uint32_t topK) {
+  delete[] hashIndices;
+}
 
-//     size_t querySize = queries.size();
+void Slash::store(vector<string> &&filenames, uint64_t numItemsPerFile, uint32_t avgDim,
+                  uint64_t batchSize) {
+  auto filePartition = partition(filenames.size());
 
-//     uint32_t **queryHashes = new uint32_t *[querySize];
+  uint64_t numFiles = filePartition.first[rank_];
+  uint64_t fileOffset = filePartition.second[rank_];
 
-// #pragma omp parallel for default(none) shared(queries, queryHashes, querySize)
-//     for (size_t q = 0; q < querySize; q++) {
-//         queryHashes[q] = imageProcessor_(queries[q]);
-//     }
+  for (size_t fileIdx = 0; fileIdx < numFiles; fileIdx++) {
+    std::unique_ptr<Reader> reader =
+        std::make_unique<Reader>(filenames.at(fileOffset + fileIdx), avgDim);
 
-//     Item *recvBuffer = new Item[querySize * topK];
+    auto data = reader->readSparse(numItemsPerFile);
 
-//     Item *scratchBuffer = new Item[querySize * topK];
+    uint32_t *hashIndices = new uint32_t[numItemsPerFile * numTables_];
 
-//     Item *localTopK = lsh_->topK(querySize, topK, queryHashes);
+    doph_->getHashes(hashIndices, data.indices, data.markers, numItemsPerFile);
 
-//     size_t mpiCopySize = 2 * topK * querySize;
-//     uint32_t numIterations = ceil(log(worldSize_) / log(2));
-//     MPI_Status status;
+    lsh_->insertRangedBatch(numItemsPerFile, fileOffset * numItemsPerFile, hashIndices);
 
-//     for (uint32_t iter = 0; iter < numIterations; iter++) {
-//         if (rank_ % ((int)pow(2, iter + 1)) == 0 && (rank_ + pow(2, iter)) < worldSize_) {
-//             int source = rank_ + pow(2, iter);
-//             MPI_Recv(recvBuffer + querySize * topK, mpiCopySize, MPI_UNSIGNED, source, iter,
-//                      MPI_COMM_WORLD, &status);
-
-// #pragma omp parallel for default(none) shared(topK, querySize, recvBuffer, localTopK,
-// scratchBuffer)
-//             for (size_t q = 0; q < querySize; q++) {
-//                 copy(recvBuffer + q * querySize, recvBuffer + (q + 1) * querySize,
-//                      scratchBuffer + 2 * querySize * q);
-
-//                 copy(localTopK + q * querySize, localTopK + (q + 1) * querySize,
-//                      scratchBuffer + (2 * q + 1) * querySize);
-
-//                 sort(scratchBuffer + 2 * q * querySize, scratchBuffer + (2 * q + 2) * querySize,
-//                      [](Item &a, Item &b) { return a.cnt >= b.cnt; });
-
-//                 copy(scratchBuffer + 2 * q * querySize, scratchBuffer + (2 * q + 1) * querySize,
-//                      localTopK + q * querySize);
-//             }
-
-//         } else if (rank_ % ((int)pow(2, iter + 1)) == ((int)pow(2, iter))) {
-//             int destination = rank_ - ((int)pow(2, iter));
-//             MPI_Send(localTopK, mpiCopySize, MPI_UNSIGNED, destination, iter, MPI_COMM_WORLD);
-//         }
-//     }
-
-//     for (size_t i = 0; i < querySize; i++) {
-//         delete[] queryHashes[i];
-//     }
-
-//     delete[] scratchBuffer;
-//     delete[] recvBuffer;
-
-//     return localTopK;
-// }
+    delete[] hashIndices;
+  }
+}
