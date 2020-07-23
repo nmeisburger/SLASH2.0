@@ -49,6 +49,8 @@ class Slash {
     doph_ = std::make_unique<DOPH>(K_, numTables_, rangePow_, rank_, worldSize_);
   }
 
+  // TODO: integrate automatic batching after initial testing.
+
   void store(string filename, uint64_t numItems, uint64_t batchSize, uint32_t avgDim,
              uint64_t offset = 0);
 
