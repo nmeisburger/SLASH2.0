@@ -131,7 +131,7 @@ DOPH::DOPH(unsigned int _K_in, unsigned int _L_in, unsigned int _rangePow_in, in
 
   MPI_Bcast(_rand1, _numhashes, MPI_INT, 0, MPI_COMM_WORLD);
 
-  std::cout << "LSH Initialized in Node " << _worldRank << std::endl;
+  std::cout << "DOPH Initialized in Node " << _worldRank << std::endl;
 }
 
 DOPH::~DOPH() {

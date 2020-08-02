@@ -1,21 +1,19 @@
 #pragma once
 
+#include <assert.h>
 #include <omp.h>
 #include <stdint.h>
 
 #include <algorithm>
-#include <experimental/random>
 #include <iostream>
 #include <numeric>
+#include <random>
 #include <unordered_map>
 #include <vector>
 
 class LSHTestFixture;
 
-struct Item {
-  uint32_t item;
-  uint32_t cnt;
-};
+struct Item;
 
 class LSH {
   friend class LSHTestFixture;
@@ -50,5 +48,37 @@ class LSH {
 
   void view();
 
+  void checkRanges(uint32_t start, uint32_t end) {
+    for (size_t i = 0; i < range_ * numTables_; i++) {
+      for (size_t j = 1; j <= std::min(reservoirs_[i][0], (uint32_t)reservoirSize_); j++) {
+        if (!(reservoirs_[i][j] >= start && reservoirs_[i][j] < end)) {
+          printf("[%lu, %lu]: %u\n", i, j, reservoirs_[i][j]);
+          exit(1);
+        }
+      }
+      for (size_t j = reservoirs_[i][0] + 1; j <= reservoirSize_; j++) {
+        if (reservoirs_[i][j] != LSH::Empty) {
+          printf("[%lu, %lu]: %u\n", i, j, reservoirs_[i][j]);
+          exit(1);
+        }
+      }
+    }
+  }
+
   ~LSH();
+};
+
+struct Item {
+  uint32_t item;
+  uint32_t cnt;
+
+  Item() {
+    item = LSH::Empty;
+    cnt = 0;
+  }
+
+  Item(uint32_t i, uint32_t c) {
+    item = i;
+    cnt = c;
+  }
 };

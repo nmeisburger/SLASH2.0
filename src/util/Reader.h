@@ -18,6 +18,13 @@ struct ReadResult {
   uint32_t *markers;
   uint32_t *labels;
   uint64_t n;
+
+  void clear() {
+    delete[] indices;
+    delete[] values;
+    delete[] markers;
+    delete[] labels;
+  }
 };
 
 class Reader {

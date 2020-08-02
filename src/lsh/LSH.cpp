@@ -12,16 +12,17 @@ LSH::LSH(uint32_t numTables, uint32_t reservoirSize, uint32_t rangePow, uint32_t
   for (size_t i = 0; i < numTables_ * range_; i++) {
     reservoirs_[i] = allReservoirData_ + i * (reservoirSize_ + 1);
     reservoirs_[i][0] = 0;
-    for (size_t j = 1; j <= reservoirSize_; j++) {
+    for (size_t j = 1; j < reservoirSize_ + 1; j++) {
       reservoirs_[i][j] = LSH::Empty;
     }
     omp_init_lock(reservoirLocks_ + i);
   }
 
+  srand(189283);
+
   this->genRand_ = new uint32_t[maxRand_];
   for (size_t i = 1; i < maxRand_; i++) {
-    // gen_rand[i] = ((uint32_t)rand()) % i;
-    genRand_[i] = std::experimental::randint((size_t)0, i);
+    genRand_[i] = ((uint32_t)rand()) % i;
   }
 }
 
@@ -58,8 +59,8 @@ void LSH::insertRangedBatch(uint64_t numItems, uint32_t start, uint32_t *hashes)
   uint32_t *reservoir;
   uint64_t loc;
   uint32_t hashIndex;
-#pragma omp parallel for default(none) \
-    shared(numItems, start, hashes) private(reservoir, loc, hashIndex)
+  // #pragma omp parallel for default(none) \
+//     shared(numItems, start, hashes) private(reservoir, loc, hashIndex)
   for (size_t n = 0; n < numItems; n++) {
     for (size_t table = 0; table < numTables_; table++) {
       hashIndex = hashes[n * numTables_ + table];
@@ -81,6 +82,7 @@ void LSH::insertRangedBatch(uint64_t numItems, uint32_t start, uint32_t *hashes)
       }
     }
   }
+  checkRanges(0, 1000);
 }
 
 uint32_t **LSH::queryReservoirs(uint64_t numItems, uint32_t *hashes) {
@@ -100,7 +102,7 @@ uint32_t **LSH::queryReservoirs(uint64_t numItems, uint32_t *hashes) {
 Item *LSH::queryTopK(uint64_t numItems, uint32_t *hashes, uint64_t k) {
   Item *result = new Item[numItems * k];
 
-#pragma omp parallel for default(none) shared(numItems, k, hashes, result)
+  // #pragma omp parallel for default(none) shared(numItems, k, hashes, result)
   for (size_t q = 0; q < numItems; q++) {
     Item *thisResult = result + q * k;
 
@@ -108,8 +110,9 @@ Item *LSH::queryTopK(uint64_t numItems, uint32_t *hashes, uint64_t k) {
 
     for (size_t table = 0; table < numTables_; table++) {
       size_t loc = table * range_ + hashes[q * numTables_ + table];
-      for (size_t r = 1; r < reservoirs_[loc][0] + 1; r++) {
+      for (size_t r = 1; r < std::min(reservoirs_[loc][0] + 1, (uint32_t)reservoirSize_ + 1); r++) {
         uint32_t item = reservoirs_[loc][r];
+        assert(item >= 0 && item < 1000 && "Found bad item");
         if (cnts.find(item) == cnts.end()) {
           cnts[item] = 1;
         } else {
@@ -120,22 +123,38 @@ Item *LSH::queryTopK(uint64_t numItems, uint32_t *hashes, uint64_t k) {
 
     vector<Item> sortedCnts;
 
+    assert(sortedCnts.size() == 0);
     for (const auto &entry : cnts) {
-      sortedCnts.push_back({entry.first, entry.second});
+      assert(entry.first >= 0 && entry.first < 1000);
+      sortedCnts.push_back(Item{entry.first, entry.second});
     }
 
-    sort(sortedCnts.begin(), sortedCnts.end(),
-         [](const auto &a, const auto &b) { return a.cnt >= b.cnt; });
+    for (auto &i : sortedCnts) {
+      assert(i.item >= 0 && i.item < 1000);
+    }
+
+    sort(sortedCnts.begin(), sortedCnts.end(), [](Item a, Item b) {
+      assert(a.item >= 0 && a.item < 1000);
+      assert(b.item >= 0 && b.item < 1000);
+
+      return a.cnt >= b.cnt;
+    });
 
     size_t i = 0;
-    for (; i < sortedCnts.size() && i < k; i++) {
-      thisResult[i] = sortedCnts[i];
+    for (; i < sortedCnts.size(); i++) {
+      assert(sortedCnts.at(i).item >= 0 && sortedCnts.at(i).item < 1000);
+      thisResult[i] = {sortedCnts.at(i).item, sortedCnts.at(i).cnt};
+      if (i == k) {
+        break;
+      }
     }
 
     for (; i < k; i++) {
       thisResult[i] = {LSH::Empty, 0};
     }
   }
+
+  printf("this is done\n");
   return result;
 }
 

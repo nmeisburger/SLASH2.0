@@ -1,9 +1,11 @@
 #pragma once
 
+#include <assert.h>
 #include <mpi.h>
 #include <omp.h>
 
 #include <algorithm>
+#include <chrono>
 #include <functional>
 
 #include "../doph/DOPH.h"
@@ -46,16 +48,20 @@ class Slash {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank_);
     MPI_Comm_size(MPI_COMM_WORLD, &worldSize_);
     lsh_ = std::make_unique<LSH>(numTables_, reservoirSize_, rangePow_, 100000);
-    doph_ = std::make_unique<DOPH>(K_, numTables_, rangePow_, rank_, worldSize_);
+    doph_ = std::make_unique<DOPH>(K_, numTables_, rangePow_, worldSize_, rank_);
+    lsh_->checkRanges(0, 1000);
   }
 
   // TODO: integrate automatic batching after initial testing.
 
-  void store(string filename, uint64_t numItems, uint64_t batchSize, uint32_t avgDim,
+  void store(const string filename, uint64_t numItems, uint64_t batchSize, uint32_t avgDim,
              uint64_t offset = 0);
 
-  void store(vector<string> &&filenames, uint64_t numItemsPerFile, uint32_t avgDim,
-             uint64_t batchSize);
+  void multiStore(vector<string> &&filenames, uint64_t numItemsPerFile, uint32_t avgDim,
+                  uint64_t batchSize);
+
+  uint32_t *topK(const string filename, uint32_t avgDim, uint64_t numQueries, uint64_t k,
+                 uint64_t offset = 0);
 
   uint32_t *distributedTopK(string filename, uint64_t numQueries, uint64_t k, uint64_t offset = 0);
 
