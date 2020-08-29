@@ -45,7 +45,7 @@ void Slash::storevec(string filename, size_t sample) {
   }
   srand(time(0));
   for (int i = 0; i < size/sample; i++) {
-    ind = rand() % size;
+    int ind = rand() % size;
     vector<float> temp = mat.at(ind);
     for (int n = 0; n < (dim - 1); n++) {
       sumvec[n] += temp.at(n);
