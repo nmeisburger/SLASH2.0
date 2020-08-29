@@ -6,7 +6,6 @@
 #include "slash/Slash.h"
 #include "util/Eval.h"
 #include "util/Reader.h"
-#include "util/io.cpp"
 using namespace std;
 
 int main(int argc, char *argv[]) {
