@@ -30,6 +30,35 @@ void Slash::store(const string filename, uint64_t numItems, uint64_t batchSize, 
        << endl;
 }
 
+void Slash::storevec(string filename, size_t sample) {
+  // TODO: Spare some of the vectors for query. 
+  // Read vectors
+  vector<vector<float>> mat = readvec(filename);
+  uint64_t size = mat.size();
+  uint32_t dim = mat.at(0).size();
+  cout << "size: " << size << "dimension: " << dim << endl;
+  // Sample to get mean. Coco_vector: 37M vectors
+  float *sumvec = new float[128];
+  
+  for (int n = 0; n < (dim - 1); n++) { // The vectors have image IDs attached at the end
+    sumvec[n] = 0.0;
+  }
+  srand(time(0));
+  for (int i = 0; i < size/sample; i++) {
+    ind = rand() % size;
+    vector<float> temp = mat.at(ind);
+    for (int n = 0; n < (dim - 1); n++) {
+      sumvec[n] += temp.at(n);
+    }
+  }
+  for (int j = 0; j < (dim - 1); j++) {
+    _meanvec.push_back(sumvec[j]/(size/sample));
+  }
+  cout << "mean calculated" << endl;
+
+  // SRP hash & store
+}
+
 void Slash::multiStore(vector<string> &&filenames, uint64_t numItemsPerFile, uint32_t avgDim,
                        uint64_t batchSize) {
   auto start = chrono::system_clock::now();

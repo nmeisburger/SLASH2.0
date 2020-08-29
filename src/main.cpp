@@ -36,7 +36,9 @@ int main(int argc, char *argv[]) {
 //                    data.markers + 100, query, 100, 32, nlist, 5);
 
   string coco_file = "../../coco_vectors_350.txt";
-  vector<vector<float>> mat = readvec(coco_file);
+  // vector<vector<float>> mat = readvec(coco_file);
+  Slash s(50, 10, 400, 10);
+  s.storevec(coco_file, 10000);
 
   MPI_Finalize();
 

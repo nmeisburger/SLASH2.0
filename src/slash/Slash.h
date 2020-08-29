@@ -7,10 +7,14 @@
 #include <algorithm>
 #include <chrono>
 #include <functional>
+#include <stdlib.h>
+#include <time.h>
+#include <vector>
 
 #include "../doph/DOPH.h"
 #include "../lsh/LSH.h"
 #include "../util/Reader.h"
+#include "util/io.cpp"
 
 using namespace std;
 
@@ -21,6 +25,7 @@ class Slash {
   std::unique_ptr<LSH> lsh_;
   std::unique_ptr<DOPH> doph_;
   uint64_t numTables_, K_, reservoirSize_, rangePow_;
+  vector<float> _meanvec;
 
   inline pair<uint32_t *, uint32_t *> partition(uint64_t n, uint64_t offset = 0) {
     uint32_t *lens = new uint32_t[worldSize_];
