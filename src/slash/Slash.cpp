@@ -33,10 +33,14 @@ void Slash::store(const string filename, uint64_t numItems, uint64_t batchSize, 
 void Slash::storevec(string filename, size_t sample) {
   // TODO: Spare some of the vectors for query. 
   // Read vectors
-  vector<vector<float>> mat = readvec(filename);
+  vector<vector<float>> mat = readvec(filename, 129);
   uint64_t size = mat.size();
   uint32_t dim = mat.at(0).size();
-  cout << "size: " << size << "dimension: " << dim << endl;
+  cout << "size: " << size << "  dimension " << dim << endl;
+  cout << "test vector: ";
+  for (auto i : mat.at(0)) {
+    cout << i << " ";
+  }
   // Sample to get mean. Coco_vector: 37M vectors
   float *sumvec = new float[128];
   
@@ -54,7 +58,7 @@ void Slash::storevec(string filename, size_t sample) {
   for (int j = 0; j < (dim - 1); j++) {
     _meanvec.push_back(sumvec[j]/(size/sample));
   }
-  cout << "mean calculated" << endl;
+  cout << endl << "mean calculated" << endl;
 
   // SRP hash & store
 }

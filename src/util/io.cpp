@@ -5,9 +5,8 @@
 #include <vector>
 using namespace std;
 
-static vector<vector<float>> readvec(string inname) {
+static vector<vector<float>> readvec(string inname, int dim) {
     string filename = inname;
-    int dim = 5;
     string line;
     vector<vector<float>> data;
     std::ifstream file(filename);
