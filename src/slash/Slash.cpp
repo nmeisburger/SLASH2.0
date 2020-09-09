@@ -61,9 +61,9 @@ void Slash::storevec(string filename, size_t sample) {
   cout << endl << "mean calculated. Begin hashing" << endl;
 
   // SRP hash & store
-  uint32_t *ids = new uint32_t[size]
-  uint32_t *hashlst = new uint32_t[numTables_]
-  uint32_t *hashes = new uint32_t[numTables_ * size]
+  uint32_t *ids = new uint32_t[size];
+  uint32_t *hashlst = new uint32_t[numTables_];
+  uint32_t *hashes = new uint32_t[numTables_ * size];
 
   for (int x = 0; x < mat.size(); x++) {
 
@@ -98,7 +98,6 @@ void Slash::storevec(string filename, size_t sample) {
 
    lsh_-> insertBatch(size, ids, hashes);
    cout << "insert done" << endl;
-
 
 }
 
