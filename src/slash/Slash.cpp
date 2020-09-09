@@ -74,7 +74,7 @@ void Slash::storevec(string filename, size_t sample) {
       
       single = vecminus(single, _meanvec, dim);
     
-      if (imgID % 100 == 0) {cout << "at image " << x << endl;}
+      if (imgID % 100 == 0 && x % 350 == 0 ) {cout << "at image " << imgID << " vector" << x << endl;}
 
       unsigned int hash = 0;
       for(int m = 0; m < numTables_; m++) {
