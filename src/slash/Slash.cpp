@@ -84,11 +84,12 @@ void Slash::storevec(string filename, size_t sample) {
           // Convert to integer
           for (int n = 0; n < K_; n++) {
           hash += hashcode[n] * pow(2, (_srp->_numhashes - n - 1));
-            }
+          }
+          
           // TODO: This one line can be deleted.
           hashlst[m] = hash;
 
-          hashes[x * numTables_ + m] = hash
+          hashes[x * numTables_ + m] = hash;
           delete [] hashcode;
         }
 
