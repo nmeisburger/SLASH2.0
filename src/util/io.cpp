@@ -46,3 +46,13 @@ static unsigned int writevec_str(vector<vector<string>> matrix, string outname) 
     }
     return 0;
 }
+
+static vector<float> vecminus(vector<float> vector1, vector<float> vector2, unsigned int size) {
+            assert(vector1.size() == size && vector2.size() == size);
+            vector<float> result;
+            result.reserve(size);
+            for (int i = 0; i < size; ++i) {
+                    result.push_back((vector1.at(i) - vector2.at(i)));
+            }
+            return result;
+    }
