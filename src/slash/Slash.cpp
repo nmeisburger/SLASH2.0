@@ -65,12 +65,13 @@ void Slash::storevec(string filename, size_t sample) {
   uint32_t *hashlst = new uint32_t[numTables_];
   uint32_t *hashes = new uint32_t[numTables_ * size];
 
+  dim = dim - 1;
   for (int x = 0; x < mat.size(); x++) {
 
       vector<float> single = mat.at(x);
       unsigned int imgID = single.back();
       single.pop_back();
-      dim = dim - 1;
+      
       single = vecminus(single, _meanvec, dim);
     
       if (imgID % 100 == 0) {cout << "at image " << x << endl;}

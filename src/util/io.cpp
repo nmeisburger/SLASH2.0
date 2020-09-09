@@ -49,7 +49,7 @@ static unsigned int writevec_str(vector<vector<string>> matrix, string outname) 
 }
 
 static vector<float> vecminus(vector<float> vector1, vector<float> vector2, unsigned int size) {
-            cout << "vecminus 1 vector dim: " << vector1.size() << "  2 vector dim: " << vector2.size() << endl;
+            // cout << "vecminus 1 vector dim: " << vector1.size() << "  2 vector dim: " << vector2.size() << endl;
             assert(vector1.size() == size && vector2.size() == size);
             vector<float> result;
             result.reserve(size);
