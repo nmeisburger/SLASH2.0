@@ -73,6 +73,8 @@ void Slash::storevec(string filename, size_t sample) {
       dim = dim - 1;
       single = vecminus(single, _meanvec, dim);
     
+      if (imgID % 100 == 0) {cout << "at image " << x << endl;}
+
       unsigned int hash = 0;
       for(int m = 0; m < numTables_; m++) {
 
@@ -85,7 +87,7 @@ void Slash::storevec(string filename, size_t sample) {
           for (int n = 0; n < K_; n++) {
           hash += hashcode[n] * pow(2, (_srp->_numhashes - n - 1));
           }
-          
+
           // TODO: This one line can be deleted.
           hashlst[m] = hash;
 
