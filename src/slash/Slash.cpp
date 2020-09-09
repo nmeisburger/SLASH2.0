@@ -41,7 +41,7 @@ void Slash::storevec(string filename, size_t sample) {
   for (auto i : mat.at(0)) {
     cout << i << " ";
   }
-  // Sample to get mean. Coco_vector: 37M vectors
+  // Sample to get mean. Coco_vector: 27M vectors
   float *sumvec = new float[128];
   
   for (int n = 0; n < (dim - 1); n++) { // The vectors have image IDs attached at the end
@@ -58,9 +58,48 @@ void Slash::storevec(string filename, size_t sample) {
   for (int j = 0; j < (dim - 1); j++) {
     _meanvec.push_back(sumvec[j]/(size/sample));
   }
-  cout << endl << "mean calculated" << endl;
+  cout << endl << "mean calculated. Begin hashing" << endl;
 
   // SRP hash & store
+  uint32_t *ids = new uint32_t[size]
+  uint32_t *hashlst = new uint32_t[numTables_]
+  uint32_t *hashes = new uint32_t[numTables_ * size]
+
+  for (int x = 0; x < mat.size(); x++) {
+
+      vector<float> single = mat.at(x);
+      unsigned int imgID = single.back();
+      single.pop_back();
+      dim = dim - 1;
+      single = vecminus(single, _meanvec, dim);
+    
+      unsigned int hash = 0;
+      for(int m = 0; m < numTables_; m++) {
+
+          srpHash *_srp = _storesrp.at(m);
+          unsigned int *hashcode = _srp->getHash(single, 450);
+
+          hash = 0;
+
+          // Convert to integer
+          for (int n = 0; n < K_; n++) {
+          hash += hashcode[n] * pow(2, (_srp->_numhashes - n - 1));
+            }
+          // TODO: This one line can be deleted.
+          hashlst[m] = hash;
+
+          hashes[x * numTables_ + m] = hash
+          delete [] hashcode;
+        }
+
+      ids[x] = imgID;
+   }
+   cout << "Hash done, inserting next" << endl;
+
+   lsh_-> insertBatch(size, ids, hashes);
+   cout << "insert done" << endl;
+
+
 }
 
 void Slash::multiStore(vector<string> &&filenames, uint64_t numItemsPerFile, uint32_t avgDim,

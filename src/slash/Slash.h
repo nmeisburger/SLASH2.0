@@ -10,11 +10,13 @@
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
+#include <random>
 
 #include "../doph/DOPH.h"
 #include "../lsh/LSH.h"
 #include "../util/Reader.h"
 #include "util/io.cpp"
+#include "../hash/srpHash.h"
 
 using namespace std;
 
@@ -26,6 +28,7 @@ class Slash {
   std::unique_ptr<DOPH> doph_;
   uint64_t numTables_, K_, reservoirSize_, rangePow_;
   vector<float> _meanvec;
+  vector<srpHash*> _storesrp;
 
   inline pair<uint32_t *, uint32_t *> partition(uint64_t n, uint64_t offset = 0) {
     uint32_t *lens = new uint32_t[worldSize_];
@@ -54,6 +57,13 @@ class Slash {
     MPI_Comm_size(MPI_COMM_WORLD, &worldSize_);
     lsh_ = std::make_unique<LSH>(numTables_, reservoirSize_, rangePow_, 100000);
     doph_ = std::make_unique<DOPH>(K_, numTables_, rangePow_, worldSize_, rank_);
+
+    srand(time(0));
+    for (int m = 0; m < numTables_; m++) {
+                srpHash *srp = new srpHash(128, k, 1, rand());
+                _storesrp.push_back(srp);
+        }
+
     lsh_->checkRanges(0, 1000);
   }
 
