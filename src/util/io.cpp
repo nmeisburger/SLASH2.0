@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "assert.h"
 using namespace std;
 
 static vector<vector<float>> readvec(string inname, int dim) {
