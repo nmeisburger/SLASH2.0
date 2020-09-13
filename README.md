@@ -2,18 +2,16 @@
 High performance distributed nearest neighbor system using LSH and sketching.
 
 ## Development
-1. Clone this repository
+1. `$ git clone https://github.com/nmeisburger0/SLASH2.0`
 2. `$ cd SLASH`
 3. `$ mkdir lib; mkdir build`
-4. `$ cd lib`
-5. `$ git clone https://github.com/google/googletest/`
-6. `$ cd ..`
-7. `$ source scripts/setup.sh`
-8. `$ cd build`
-9. `$ cmake ..`
-10. `$ make all`
-11. To run the program run `$ src/SLASH_run` from the build directory
-12. For testing run `$ test/SLASH_test` from the build directory
+4. `$ git submodule update --init`
+5. (If running on NOTS) `$ source scripts/setup.sh`
+6. `$ cd build`
+7. `$ cmake ..`
+8. `$ make all`
+9. To run the program run `$ build/src/SLASH_run`.
+10. For testing run `$ build/test/SLASH_test`.
 
 ## Testing
 This package is linked with the gtest and gmock testing and mocking libraries. This allow for easy creation of unit tests and mock classes. For more information see the documentation: 
