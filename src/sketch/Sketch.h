@@ -54,7 +54,7 @@ class Sketch {
 
   void mergeAll();
 
-  void insert(uint32_t *items, uint64_t n);
+  void insert(uint32_t **items, uint64_t numTables, uint64_t n);
 
   TopKResult *topK(uint64_t k, uint32_t threshold = 0);
 

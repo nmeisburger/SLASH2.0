@@ -10,6 +10,7 @@
 
 #include "../doph/DOPH.h"
 #include "../lsh/LSH.h"
+#include "../sketch/Sketch.h"
 #include "../util/Reader.h"
 
 using namespace std;
@@ -57,13 +58,16 @@ class Slash {
   void store(const string filename, uint64_t numItems, uint64_t batchSize, uint32_t avgDim,
              uint64_t offset = 0);
 
+  // Possible idea based on using separate file per CPU
+  // << UNTESTED >>
   void multiStore(vector<string> &&filenames, uint64_t numItemsPerFile, uint32_t avgDim,
                   uint64_t batchSize);
 
   uint32_t *topK(const string filename, uint32_t avgDim, uint64_t numQueries, uint64_t k,
                  uint64_t offset = 0);
 
-  uint32_t *distributedTopK(string filename, uint64_t numQueries, uint64_t k, uint64_t offset = 0);
+  TopKResult *distributedTopK(string filename, uint32_t avgDim, uint64_t numQueries, uint64_t k,
+                              uint64_t sketchHashes, uint64_t sketchRowSize, uint64_t offset = 0);
 
   ~Slash() {}
 };

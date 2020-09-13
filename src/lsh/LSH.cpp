@@ -112,7 +112,7 @@ Item *LSH::queryTopK(uint64_t numItems, uint32_t *hashes, uint64_t k) {
       size_t loc = table * range_ + hashes[q * numTables_ + table];
       for (size_t r = 1; r < std::min(reservoirs_[loc][0] + 1, (uint32_t)reservoirSize_ + 1); r++) {
         uint32_t item = reservoirs_[loc][r];
-        assert(item >= 0 && item < 1000 && "Found bad item");
+        // assert(item >= 0 && item < 1000 && "Found bad item");
         if (cnts.find(item) == cnts.end()) {
           cnts[item] = 1;
         } else {
@@ -123,26 +123,26 @@ Item *LSH::queryTopK(uint64_t numItems, uint32_t *hashes, uint64_t k) {
 
     vector<Item> sortedCnts;
 
-    assert(sortedCnts.size() == 0);
+    // assert(sortedCnts.size() == 0);
     for (const auto &entry : cnts) {
-      assert(entry.first >= 0 && entry.first < 1000);
+      // assert(entry.first >= 0 && entry.first < 1000);
       sortedCnts.push_back(Item{entry.first, entry.second});
     }
 
-    for (auto &i : sortedCnts) {
-      assert(i.item >= 0 && i.item < 1000);
-    }
+    // for (auto &i : sortedCnts) {
+    //   assert(i.item >= 0 && i.item < 1000);
+    // }
 
     sort(sortedCnts.begin(), sortedCnts.end(), [](Item a, Item b) {
-      assert(a.item >= 0 && a.item < 1000);
-      assert(b.item >= 0 && b.item < 1000);
+      // assert(a.item >= 0 && a.item < 1000);
+      // assert(b.item >= 0 && b.item < 1000);
 
       return a.cnt >= b.cnt;
     });
 
     size_t i = 0;
     for (; i < sortedCnts.size(); i++) {
-      assert(sortedCnts.at(i).item >= 0 && sortedCnts.at(i).item < 1000);
+      // assert(sortedCnts.at(i).item >= 0 && sortedCnts.at(i).item < 1000);
       thisResult[i] = {sortedCnts.at(i).item, sortedCnts.at(i).cnt};
       if (i == k) {
         break;
@@ -154,7 +154,6 @@ Item *LSH::queryTopK(uint64_t numItems, uint32_t *hashes, uint64_t k) {
     }
   }
 
-  printf("this is done\n");
   return result;
 }
 

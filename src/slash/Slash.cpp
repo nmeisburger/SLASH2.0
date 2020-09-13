@@ -66,7 +66,7 @@ uint32_t *Slash::topK(const string filename, uint32_t avgDim, uint64_t numQuerie
                       uint64_t offset) {
   auto start = chrono::system_clock::now();
 
-  lsh_->checkRanges(0, 1000);
+  // lsh_->checkRanges(0, 1000);
   std::unique_ptr<Reader> reader = std::make_unique<Reader>(filename, avgDim, offset);
 
   auto data = reader->readSparse(numQueries);
@@ -98,4 +98,44 @@ uint32_t *Slash::topK(const string filename, uint32_t avgDim, uint64_t numQuerie
   cout << "Slash::topK Complete: " << elapsed.count() << " seconds, " << numQueries << " queries"
        << endl;
   return topKResult;
+}
+
+TopKResult *Slash::distributedTopK(string filename, uint32_t avgDim, uint64_t numQueries,
+                                   uint64_t k, uint64_t sketchHashes, uint64_t sketchRowSize,
+                                   uint64_t offset) {
+  Sketch *s = new Sketch(sketchHashes, sketchRowSize, numQueries, rank_, worldSize_);
+
+  auto p = partition(numQueries, 0);
+
+  std::unique_ptr<Reader> reader =
+      std::make_unique<Reader>(filename, avgDim, p.second[rank_] + offset);
+
+  auto data = reader->readSparse(p.first[rank_]);
+  assert(data.n == p.first[rank_]);
+
+  uint32_t *hashes = new uint32_t[numQueries * numTables_];
+
+  doph_->getHashes(hashes + p.second[rank_] * numTables_, data.indices, data.markers, data.n);
+
+  int lens[worldSize_];
+  int offsets[worldSize_];
+  for (int i = 0; i < worldSize_; i++) {
+    lens[i] = p.first[i] * numTables_;
+    offsets[i] = p.second[i] * numTables_;
+  }
+
+  MPI_Allgatherv(MPI_IN_PLACE, p.first[rank_], MPI_UNSIGNED, hashes, lens, offsets, MPI_UNSIGNED,
+                 MPI_COMM_WORLD);
+
+  auto reservoirs = lsh_->queryReservoirs(numQueries, hashes);
+
+  s->insert(reservoirs, numTables_, numQueries);
+
+  s->mergeAll();
+
+  auto result = s->topK(k);
+
+  delete s;
+
+  return result;
 }

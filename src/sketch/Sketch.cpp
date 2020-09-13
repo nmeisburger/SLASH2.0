@@ -80,29 +80,32 @@ void Sketch::mergeAll() {
   delete[] recvBuffer;
 }
 
-void Sketch::insert(uint32_t *items, uint64_t itemsPerSketch) {
+void Sketch::insert(uint32_t **items, uint64_t numTables, uint64_t rowSize) {
   SketchItem *curr;
   uint32_t newItem;
 
   for (size_t sketch = 0; sketch < _numSketches; sketch++) {
     uint32_t *hashes = new uint32_t[_numHashes];
-    for (size_t n = 0; n < itemsPerSketch; n++) {
-      newItem = items[sketch * itemsPerSketch + n];
-      hash(newItem, hashes);
-      for (size_t h = 0; h < _numHashes; h++) {
-        curr = _sketch + index(sketch, h, hashes[h]);
-        if (curr->heavyHitter == newItem) {
-          curr->count++;
-        } else {
-          if (curr->count > 1) {
-            curr->count--;
+    for (size_t table = 0; table < numTables; table++) {
+      for (size_t n = 0; n < rowSize; n++) {
+        newItem = items[sketch * numTables + table][n];
+        hash(newItem, hashes);
+        for (size_t h = 0; h < _numHashes; h++) {
+          curr = _sketch + index(sketch, h, hashes[h]);
+          if (curr->heavyHitter == newItem) {
+            curr->count++;
           } else {
-            curr->heavyHitter = newItem;
-            curr->count = 1;
+            if (curr->count > 1) {
+              curr->count--;
+            } else {
+              curr->heavyHitter = newItem;
+              curr->count = 1;
+            }
           }
         }
       }
     }
+
     delete[] hashes;
   }
 }
