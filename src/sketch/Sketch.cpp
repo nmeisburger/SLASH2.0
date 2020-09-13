@@ -89,6 +89,9 @@ void Sketch::insert(uint32_t **items, uint64_t numTables, uint64_t rowSize) {
     for (size_t table = 0; table < numTables; table++) {
       for (size_t n = 0; n < rowSize; n++) {
         newItem = items[sketch * numTables + table][n];
+        if (newItem == LSH::Empty) {
+          break;
+        }
         hash(newItem, hashes);
         for (size_t h = 0; h < _numHashes; h++) {
           curr = _sketch + index(sketch, h, hashes[h]);

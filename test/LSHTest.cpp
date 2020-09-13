@@ -1,6 +1,12 @@
+#include <algorithm>
+#include <map>
+#include <random>
+#include <vector>
+
 #include "gtest/gtest.h"
 #include "lsh/LSH.h"
 
+using namespace std;
 using namespace ::testing;
 
 class LSHTestFixture : public ::testing::Test {
@@ -121,5 +127,53 @@ TEST_F(LSHTestFixture, QueryTopk) {
   for (int i = 0; i < 12; i++) {
     EXPECT_EQ(results[i].item, topk[i].item);
     EXPECT_EQ(results[i].cnt, topk[i].cnt);
+  }
+}
+
+TEST_F(LSHTestFixture, RandomInsertionAndRowQuery) {
+  uint64_t numInsertion = 1000;
+  uint64_t numQuery = 200;
+  uint64_t numTables = 8;
+  uint64_t range = 128;
+  LSH* lsh = new LSH(/*numTables*/ numTables, /*reservoirSize*/ numInsertion + 20, /*rangePow*/ 7,
+                     /*maxRand*/ 100);
+
+  uint32_t* queryHashes = new uint32_t[numTables * numQuery];
+
+  generate(queryHashes, queryHashes + numTables * numQuery,
+           [range]() -> uint32_t { return rand() % range; });
+
+  map<uint32_t, map<uint32_t, vector<uint32_t>>> expectedValues;
+
+  uint32_t* insertionHashes = new uint32_t[numTables * numInsertion];
+
+  for (int i = 0; i < numInsertion; i++) {
+    for (int t = 0; t < numTables; t++) {
+      int randQuery = rand() % numQuery;
+      uint32_t hash = queryHashes[randQuery * numTables + t];
+      expectedValues[t][hash].push_back(i);
+      insertionHashes[i * numTables + t] = hash;
+    }
+  }
+
+  lsh->insertRangedBatch(numInsertion, 0, insertionHashes);
+
+  uint32_t** rows = lsh->queryReservoirs(numQuery, queryHashes);
+
+  for (int i = 0; i < numQuery; i++) {
+    for (int t = 0; t < numTables; t++) {
+      uint32_t* reservoir = rows[i * numTables + t];
+      auto x = expectedValues[t].find(queryHashes[i * numTables + t]);
+      int j = 0;
+      if (x != expectedValues[t].end()) {
+        for (auto item : x->second) {
+          ASSERT_EQ(item, reservoir[j]);
+          j++;
+        }
+      }
+      for (; j < (numInsertion + 20); j++) {
+        ASSERT_EQ(reservoir[j], (uint32_t)-1);
+      }
+    }
   }
 }
