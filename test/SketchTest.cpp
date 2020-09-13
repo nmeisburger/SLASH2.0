@@ -38,27 +38,32 @@ class SketchTestFixture : public ::testing::Test {
   int rank_, worldSize_;
 };
 
-// TEST_F(SketchTestFixture, InsertionTest) {
-//   uint32_t items[3][8] = {
-//       {0, 0, 3, 4, 7, 7, 5, 2}, {0, 1, 2, 3, 0, 1, 2, 3}, {0, 0, 3, 4, 3, 7, 7, 7}};
+TEST_F(SketchTestFixture, InsertionTest) {
+  uint32_t items[6][8] = {{0, 0, 3, 4}, {7, 7, 5, 2}, {0, 1, 2, 3},
+                          {0, 1, 2, 3}, {0, 0, 3, 4}, {3, 7, 7, 7}};
 
-//   SketchItem correct[] = {
-//       {0, 1}, {5, 1},          {2, 1},          {7, 2},          {7, 2},          {0, 1},
-//       {5, 1}, {2, 1},          {2, 1},          {7, 2},          {0, 1},          {5, 1},
-//       {5, 1}, {2, 1},          {7, 2},          {0, 1},          {0, 2},          {1, 2},
-//       {2, 2}, {3, 2},          {3, 2},          {0, 2},          {1, 2},          {2, 2},
-//       {2, 2}, {3, 2},          {0, 2},          {1, 2},          {1, 2},          {2, 2},
-//       {3, 2}, {0, 2},          {0, 1},          {LSH::Empty, 0}, {LSH::Empty, 0}, {7, 2},
-//       {7, 2}, {0, 1},          {LSH::Empty, 0}, {LSH::Empty, 0}, {LSH::Empty, 0}, {7, 2},
-//       {0, 1}, {LSH::Empty, 0}, {LSH::Empty, 0}, {LSH::Empty, 0}, {7, 2},          {0, 1}};
+  SketchItem correct[] = {
+      {0, 1}, {5, 1},          {2, 1},          {7, 2},          {7, 2},          {0, 1},
+      {5, 1}, {2, 1},          {2, 1},          {7, 2},          {0, 1},          {5, 1},
+      {5, 1}, {2, 1},          {7, 2},          {0, 1},          {0, 2},          {1, 2},
+      {2, 2}, {3, 2},          {3, 2},          {0, 2},          {1, 2},          {2, 2},
+      {2, 2}, {3, 2},          {0, 2},          {1, 2},          {1, 2},          {2, 2},
+      {3, 2}, {0, 2},          {0, 1},          {LSH::Empty, 0}, {LSH::Empty, 0}, {7, 2},
+      {7, 2}, {0, 1},          {LSH::Empty, 0}, {LSH::Empty, 0}, {LSH::Empty, 0}, {7, 2},
+      {0, 1}, {LSH::Empty, 0}, {LSH::Empty, 0}, {LSH::Empty, 0}, {7, 2},          {0, 1}};
 
-//   sketch_->insert(items, 8);
+  uint32_t** ptr = new uint32_t*[8];
+  for (int i = 0; i < 8; i++) {
+    ptr[i] = items[i];
+  }
 
-//   for (int i = 0; i < 48; i++) {
-//     EXPECT_EQ(getSketchContents()[i].heavyHitter, correct[i].heavyHitter);
-//     EXPECT_EQ(getSketchContents()[i].count, correct[i].count);
-//   }
-// }
+  sketch_->insert(ptr, 2, 4);
+
+  for (int i = 0; i < 48; i++) {
+    EXPECT_EQ(getSketchContents()[i].heavyHitter, correct[i].heavyHitter);
+    EXPECT_EQ(getSketchContents()[i].count, correct[i].count);
+  }
+}
 
 TEST_F(SketchTestFixture, BasicMerge) {
   SketchItem items1[] = {
