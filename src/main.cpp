@@ -34,10 +34,18 @@ int main(int argc, char *argv[]) {
 //   similarityMetric(data.indices, data.values, data.markers, data.indices, data.values,
 //                    data.markers + 100, query, 100, 32, nlist, 5);
 
-  string coco_file = "../../coco_vectors_350.txt"; // Stored on NOTS
+  // string coco_file = "../../coco_vectors_350.txt"; // Stored on NOTS
+  string coco_file = "../../small_coco_train";
   // vector<vector<float>> mat = readvec(coco_file);
   Slash s(50, 10, 400, 10);
   s.storevec(coco_file, 10000);
+  string query_file = "../../small_coco_val.txt";
+  uint32_t *result = s.query(query_file);
+  cout << "Query id results:" << endl;
+  for (auto i : result) {
+    cout << i << " ";
+  }
+
 
   MPI_Finalize();
 

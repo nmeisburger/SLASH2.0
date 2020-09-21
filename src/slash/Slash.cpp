@@ -31,7 +31,6 @@ void Slash::store(const string filename, uint64_t numItems, uint64_t batchSize, 
 }
 
 void Slash::storevec(string filename, size_t sample) {
-  // TODO: Spare some of the vectors for query. 
   // Read vectors
   vector<vector<float>> mat = readvec(filename, 129);
   uint64_t size = mat.size();
@@ -66,6 +65,7 @@ void Slash::storevec(string filename, size_t sample) {
   uint32_t *hashes = new uint32_t[numTables_ * size];
 
   dim = dim - 1;
+  
   for (int x = 0; x < mat.size(); x++) {
 
       vector<float> single = mat.at(x);
@@ -74,7 +74,7 @@ void Slash::storevec(string filename, size_t sample) {
       
       single = vecminus(single, _meanvec, dim);
     
-      if (imgID % 100 == 0 && x % 350 == 0 ) {cout << "at image " << imgID << " vector" << x << endl;}
+      if (imgID % 100 == 0 && x % 350 == 0 ) {cout << "at image " << imgID << " vector: " << x << endl;}
 
       unsigned int hash = 0;
       for(int m = 0; m < numTables_; m++) {
@@ -103,6 +103,78 @@ void Slash::storevec(string filename, size_t sample) {
    lsh_-> insertBatch(size, ids, hashes);
    cout << "insert done" << endl;
 
+}
+
+uint32_t *Slash::query(string filename){
+    vector<vector<float>> mat = readvec(filename, 129);
+    uint64_t size = mat.size();
+    uint32_t dim = mat.at(0).size() - 1;
+    cout << "size: " << size << "  dimension " << dim << endl;
+    cout << "test vector: ";
+    for (auto i : mat.at(0)) {
+    cout << i << " ";
+    }
+    // TODO: Check that the first vector is read. 
+
+    unordered_map<unsigned int, int> score;
+    // Minus mean and query. 
+    // uint32_t mark = 0;
+    uint32_t *queries = new uint32_t[numTables_ * 350];
+    uint32_t *result = new uint32_t[size / NUM_FEATURE];
+    int count = 0;
+
+    for (int x = 0; x < mat.size(); x++) {
+       vector<float> queryvec = mat.at(x);
+       unsigned int queryID = queryvec.back();
+       queryvec.pop_back();
+
+       queryvec = vecminus(queryvec, _meanvec, dim);
+
+       unsigned int hash = 0;
+       for (int m = 0; m < numTables_; m++) {
+          srpHash *_srp = _storesrp.at(m);
+          unsigned int *hashcode = _srp->getHash(queryvec, 450);
+
+          // Convert to integer
+          for (int n = 0; n < K_; n++) {
+          hash += hashcode[n] * pow(2, (_srp->_numhashes - n - 1));
+          }
+
+          queries[(x % 350) * numTables_ + m] = hash;
+          delete[] hashcode;
+       }
+      
+      // When the vectors belonging to one image is processed. 
+      if (x > 0 && x % 350 == 0){
+          cout << "Querying id" << queryID << endl;
+          unordered_map<unsigned int, int> score;
+          uint32_t **retrieved = lsh_-> queryReservoirs(350, queries);
+          for (int i = 0; i < numTables_ * NUM_FEATURE; j++) {
+              for (int j = 0; j < RESERVOIR_SIZE; j++) {
+
+                  if (score.count(retrieved[i][j]) == 0) {
+                      score[retrieved[i][j]] = 0;
+                  }
+                  else {
+                      score[retrieved[i][j]] ++;
+                  }
+
+              }
+          }
+          vector<pair<unsigned int, unsigned int> > freq_arr(score.begin(), score.end());
+          sort(freq_arr.begin(), freq_arr.end(), comparePair());
+
+          score.clear();
+          if (freq_arr[0].first == -1) {
+                cout << "Most match score is: " << freq_arr[1].second << endl;
+                result[count] =  freq_arr[1].first;
+          }
+          cout << endl << "Most match score is: " << freq_arr[0].second << endl;
+          result[count] = freq_arr[0].first;
+          count ++;
+      }
+    }
+    return result;
 }
 
 void Slash::multiStore(vector<string> &&filenames, uint64_t numItemsPerFile, uint32_t avgDim,

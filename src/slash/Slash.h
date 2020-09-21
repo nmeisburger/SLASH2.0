@@ -11,6 +11,7 @@
 #include <time.h>
 #include <vector>
 #include <random>
+#include "unordered_map"
 
 #include "../doph/DOPH.h"
 #include "../lsh/LSH.h"
@@ -19,6 +20,21 @@
 #include "../hash/srpHash.h"
 
 using namespace std;
+
+struct comparePair
+{
+        bool operator()(pair<int, int> p1, pair<int, int> p2)
+        {
+                // if frequencies of two elements are same
+                // then the larger number should come first
+                if (p1.second == p2.second)
+                        return p1.first > p2.first;
+
+                // insert elements in the priority queue on the basis of
+                // decreasing order of frequencies
+                return p1.second > p2.second;
+        }
+};
 
 class Slash {
  private:
@@ -73,6 +89,8 @@ class Slash {
              uint64_t offset = 0);
   
   void storevec(const string filename, size_t sample);
+
+  uint32_t *query(string filename);
 
   void multiStore(vector<string> &&filenames, uint64_t numItemsPerFile, uint32_t avgDim,
                   uint64_t batchSize);

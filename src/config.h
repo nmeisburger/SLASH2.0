@@ -5,6 +5,7 @@
 #define BETA1 0.9
 #define BETA2 0.9
 #define EPSILON 0.001
+#define NUM_FEATURE 350
 // #define SPARSITY 0.1
 
 // SRP
