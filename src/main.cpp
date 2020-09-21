@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
   for (int i = 0; i < sizeof(result) ; i++) {
     cout << result[i] << " ";
   }
+  cout << endl;
 
 
   MPI_Finalize();

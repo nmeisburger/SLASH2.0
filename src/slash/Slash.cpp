@@ -110,10 +110,10 @@ uint32_t *Slash::query(string filename){
     uint64_t size = mat.size();
     uint32_t dim = mat.at(0).size() - 1;
     cout << "size: " << size << "  dimension " << dim << endl;
-    cout << "test vector: ";
-    for (auto i : mat.at(0)) {
-    cout << i << " ";
-    }
+    // cout << "test vector: ";
+    // for (auto i : mat.at(0)) {
+    // cout << i << " ";
+    // }
     // TODO: Check that the first vector is read. 
 
     unordered_map<unsigned int, int> score;
@@ -145,7 +145,7 @@ uint32_t *Slash::query(string filename){
        }
       
       // When the vectors belonging to one image is processed. 
-      if (x > 0 && x % 350 == 0){
+      if (x > 0 && (x+1) % 350 == 0){
           cout << "Querying id" << queryID << endl;
           unordered_map<unsigned int, int> score;
           uint32_t **retrieved = lsh_-> queryReservoirs(350, queries);
