@@ -146,11 +146,11 @@ uint32_t *Slash::query(string filename){
       
       // When the vectors belonging to one image is processed. 
       if (x > 0 && (x+1) % 350 == 0){
-          cout << "Querying id" << queryID << endl;
+          cout << "Querying id: " << queryID << endl;
           unordered_map<unsigned int, int> score;
           uint32_t **retrieved = lsh_-> queryReservoirs(350, queries);
           for (int i = 0; i < numTables_ * NUM_FEATURE; i++) {
-              for (int j = 0; j < RESERVOIR_SIZE; j++) {
+              for (int j = 0; j < sizeof(retrieved[i]); j++) {
 
                   if (score.count(retrieved[i][j]) == 0) {
                       score[retrieved[i][j]] = 0;
