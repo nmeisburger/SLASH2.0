@@ -42,8 +42,8 @@ int main(int argc, char *argv[]) {
   string query_file = "../../small_coco_val.txt";
   uint32_t *result = s.query(query_file);
   cout << "Query id results:" << endl;
-  for (auto i : result) {
-    cout << i << " ";
+  for (int i = 0; i < sizeof(result) < i++) {
+    cout << result[i] << " ";
   }
 
 
