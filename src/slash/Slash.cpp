@@ -149,7 +149,7 @@ uint32_t *Slash::query(string filename){
           cout << "Querying id" << queryID << endl;
           unordered_map<unsigned int, int> score;
           uint32_t **retrieved = lsh_-> queryReservoirs(350, queries);
-          for (int i = 0; i < numTables_ * NUM_FEATURE; j++) {
+          for (int i = 0; i < numTables_ * NUM_FEATURE; i++) {
               for (int j = 0; j < RESERVOIR_SIZE; j++) {
 
                   if (score.count(retrieved[i][j]) == 0) {

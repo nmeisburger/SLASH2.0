@@ -1,7 +1,7 @@
-#define NUM_TABLES 4
+#define NUM_TABLES 50
 #define NUM_HASHES 2
-#define RESERVOIR_SIZE 10
-#define RANGE_POW 3
+#define RESERVOIR_SIZE 400
+#define RANGE_POW 10
 #define BETA1 0.9
 #define BETA2 0.9
 #define EPSILON 0.001

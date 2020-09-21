@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   // string coco_file = "../../coco_vectors_350.txt"; // Stored on NOTS
   string coco_file = "../../small_coco_train";
   // vector<vector<float>> mat = readvec(coco_file);
-  Slash s(50, 10, 400, 10);
+  Slash s(NUM_TABLES, RANGE_POW, RESERVOIR_SIZE, RANGE_POW);
   s.storevec(coco_file, 10000);
   string query_file = "../../small_coco_val.txt";
   uint32_t *result = s.query(query_file);

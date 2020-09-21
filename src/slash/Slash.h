@@ -18,6 +18,7 @@
 #include "../util/Reader.h"
 #include "util/io.cpp"
 #include "../hash/srpHash.h"
+#include "../config.h"
 
 using namespace std;
 
