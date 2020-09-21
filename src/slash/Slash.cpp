@@ -172,6 +172,7 @@ uint32_t *Slash::query(string filename){
           cout << endl << "Most match score is: " << freq_arr[0].second << endl;
           result[count] = freq_arr[0].first;
           count ++;
+          delete[] retrieved;
       }
     }
     return result;
