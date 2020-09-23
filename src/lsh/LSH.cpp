@@ -89,9 +89,9 @@ uint32_t **LSH::queryReservoirs(uint64_t numItems, uint32_t *hashes) {
   uint32_t **rows = new uint32_t *[numItems * numTables_];
   size_t loc, index;
   cout << "IN LSH, before for loop." << endl;
-#pragma omp parallel for default(none) shared(numItems, hashes, rows) private(loc, index)
+// #pragma omp parallel for default(none) shared(numItems, hashes, rows) private(loc, index)
   for (size_t query = 0; query < numItems; query++) {
-    printf("IN LSH: Querying number: ");
+    printf("IN LSH: Querying number: %d", query);
     for (size_t table = 0; table < numTables_; table++) {
       index = query * numTables_ + table;
       loc = table * range_ + hashes[index];
