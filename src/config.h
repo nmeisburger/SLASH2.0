@@ -1,5 +1,5 @@
 #define NUM_TABLES 50
-#define NUM_HASHES 2
+#define NUM_HASHES 10
 #define RESERVOIR_SIZE 400
 #define RANGE_POW 10
 #define BETA1 0.9
