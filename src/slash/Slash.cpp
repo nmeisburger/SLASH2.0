@@ -105,7 +105,7 @@ void Slash::storevec(string filename, size_t sample) {
 
 }
 
-uint32_t *Slash::query(string filename){
+vector<uint32_t> Slash::query(string filename){
     vector<vector<float>> mat = readvec(filename, 129);
     uint64_t size = mat.size();
     uint32_t dim = mat.at(0).size() - 1;
@@ -120,7 +120,7 @@ uint32_t *Slash::query(string filename){
     // Minus mean and query. 
     // uint32_t mark = 0;
     uint32_t *queries = new uint32_t[numTables_ * 350];
-    uint32_t *result = new uint32_t[size / NUM_FEATURE];
+    vector<uint32_t> result;
     int count = 0;
 
     for (int x = 0; x < mat.size(); x++) {
@@ -153,7 +153,7 @@ uint32_t *Slash::query(string filename){
           unordered_map<unsigned int, int> score;
           cout << "Initializing" << endl;
           uint32_t **retrieved = lsh_-> queryReservoirs(350, queries);
-          cout << "Before updating score" << endl;
+          // cout << "Before updating score" << endl;
           for (int i = 0; i < numTables_ * NUM_FEATURE; i++) {
               for (int j = 0; j < sizeof(retrieved[i]); j++) {
 
@@ -173,10 +173,10 @@ uint32_t *Slash::query(string filename){
           score.clear();
           if (freq_arr[0].first == -1) {
                 cout << "Most match score is: " << freq_arr[1].second << endl;
-                result[count] =  freq_arr[1].first;
+                result.push_back(freq_arr[1].first);
           }
           cout << endl << "Most match score is: " << freq_arr[0].second << endl;
-          result[count] = freq_arr[0].first;
+          result.push_back(freq_arr[0].first);
           count ++;
           delete[] retrieved;
       }

@@ -91,7 +91,7 @@ class Slash {
   
   void storevec(const string filename, size_t sample);
 
-  uint32_t *query(string filename);
+  vector<uint32_t> query(string filename);
 
   void multiStore(vector<string> &&filenames, uint64_t numItemsPerFile, uint32_t avgDim,
                   uint64_t batchSize);

@@ -40,10 +40,10 @@ int main(int argc, char *argv[]) {
   Slash s(NUM_TABLES, RANGE_POW, RESERVOIR_SIZE, RANGE_POW);
   s.storevec(coco_file, 10000);
   string query_file = "../../small_coco_val.txt";
-  uint32_t *result = s.query(query_file);
+  vector<uint32_t> result = s.query(query_file);
   cout << "Query id results:" << endl;
-  for (int i = 0; i < sizeof(result) ; i++) {
-    cout << result[i] << " ";
+  for (auto i: result) {
+    cout << i << " ";
   }
   cout << endl;
 
