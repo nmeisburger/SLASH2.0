@@ -156,7 +156,7 @@ vector<uint32_t> Slash::query(string filename){
           // cout << "Before updating score" << endl;
           for (int i = 0; i < numTables_ * NUM_FEATURE; i++) {
               // TODO: Change the siezeof.
-              for (int j = 0; j < RESERVOIR_SIZE); j++) {
+              for (int j = 0; j < RESERVOIR_SIZE; j++) {
                   if (retrieved[i][j] == LSH::Empty) {continue;}
 
                   if (score.count(retrieved[i][j]) == 0) {
