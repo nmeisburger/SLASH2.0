@@ -96,7 +96,7 @@ uint32_t **LSH::queryReservoirs(uint64_t numItems, uint32_t *hashes) {
     for (size_t table = 0; table < numTables_; table++) {
       index = query * numTables_ + table;
       loc = table * range_ + hashes[index];
-      cout << "IN LSH: Before row assignment, table # " << table << endl;
+      // cout << "IN LSH: Before row assignment, table # " << table << endl;
       if (loc > range_ * numTables_) {
         cout << "LSH Hash range out of big bound: " << loc << endl;
       }

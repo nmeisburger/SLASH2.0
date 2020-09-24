@@ -135,10 +135,13 @@ uint32_t *Slash::query(string filename){
           srpHash *_srp = _storesrp.at(m);
           unsigned int *hashcode = _srp->getHash(queryvec, 450);
 
+          hash = 0;
           // Convert to integer
           for (int n = 0; n < K_; n++) {
           hash += hashcode[n] * pow(2, (_srp->_numhashes - n - 1));
           }
+
+          // See range
 
           queries[(x % 350) * numTables_ + m] = hash;
           delete[] hashcode;
