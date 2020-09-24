@@ -100,7 +100,7 @@ uint32_t **LSH::queryReservoirs(uint64_t numItems, uint32_t *hashes) {
       if (loc > range_) {
         cout << "LSH Hash range out of big bound" << endl;
       }
-      if (hashes[index] > (1 << rangePow)) {
+      if (hashes[index] > (1 << rangePow_)) {
         cout << "Out of table single bound" << endl;
       }
       rows[index] = reservoirs_[loc] + 1;
