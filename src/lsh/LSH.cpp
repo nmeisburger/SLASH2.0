@@ -182,7 +182,7 @@ void LSH::reset() {
 }
 
 void LSH::view() {
-  for (size_t t = 0; t < numTables_; t++) {
+  for (size_t t = 0; t < 3; t++) {
     printf("LSH Table %lu\n", t);
     for (size_t r = 0; r < range_; r++) {
       uint32_t *reservoir = reservoirs_[t * range_ + r];
