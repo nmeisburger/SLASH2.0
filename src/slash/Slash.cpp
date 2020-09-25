@@ -34,7 +34,7 @@ void Slash::storevec(string filename, size_t sample) {
   // Read vectors
   vector<vector<float>> mat = readvec(filename, 129);
   uint64_t size = mat.size();
-  uint32_t dim = mat.at(0).size();
+  uint32_t dim = mat.at(0).size() - 1;
   cout << "size: " << size << "  dimension " << dim << endl;
   // Sample to get mean. Coco_vector: 27M vectors
   float *sumvec = new float[128];
@@ -57,18 +57,30 @@ void Slash::storevec(string filename, size_t sample) {
   for (int j = 0; j < (dim - 1); j++) {
     _meanvec.push_back(sumvec[j]/(size/sample));
   }
-  cout << endl << "mean calculated. Begin hashing" << endl;
+  cout << endl << "mean calculated. Begin hashing. Mean: " << endl;
+  
+  cout << "test mean vector: ";
+  for (auto i : _meanvec) {
+    cout << i << " ";
+  }
+  cout << endl;
 
   // SRP hash & store
   uint32_t *ids = new uint32_t[size];
   uint32_t *hashlst = new uint32_t[numTables_];
   uint32_t *hashes = new uint32_t[numTables_ * size];
 
-  dim = dim - 1;
   
   for (int x = 0; x < mat.size(); x++) {
 
       vector<float> single = mat.at(x);
+
+      cout << "test vector 2: ";
+      for (auto i : single) {
+        cout << i << " ";
+      }
+      cout << endl;
+
       unsigned int imgID = single.back();
       single.pop_back();
       
@@ -76,7 +88,7 @@ void Slash::storevec(string filename, size_t sample) {
     
       if (imgID % 100 == 0 && x % 350 == 0 ) {cout << "at image " << imgID << " vector: " << x << endl;}
 
-      cout << "test vector: ";
+      cout << "test vector 3: ";
       for (auto i : single) {
         cout << i << " ";
       }
