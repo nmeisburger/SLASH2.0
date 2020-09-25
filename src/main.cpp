@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   string coco_file = "../../small_coco_train.txt";
   // vector<vector<float>> mat = readvec(coco_file);
   Slash s(NUM_TABLES, RANGE_POW, RESERVOIR_SIZE, RANGE_POW);
-  s.storevec(coco_file, 10000);
+  s.storevec(coco_file, 1);
   string query_file = "../../small_coco_val.txt";
   vector<uint32_t> result = s.query(query_file);
   cout << "Query id results:" << endl;
