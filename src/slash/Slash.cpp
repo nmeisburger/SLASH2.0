@@ -54,11 +54,11 @@ void Slash::storevec(string filename, size_t sample) {
       sumvec[n] += temp.at(n);
     }
   }
-  for (int j = 0; j < (dim - 1); j++) {
+  for (int j = 0; j < dim; j++) {
     _meanvec.push_back(sumvec[j]/(size/sample));
   }
   cout << endl << "mean calculated. Begin hashing. Mean: " << endl;
-  
+
   cout << "test mean vector: ";
   for (auto i : _meanvec) {
     cout << i << " ";
