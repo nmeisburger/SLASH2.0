@@ -106,6 +106,9 @@ void Slash::storevec(string filename, size_t sample) {
 }
 
 vector<uint32_t> Slash::query(string filename){
+
+    lsh_-> view();
+
     vector<vector<float>> mat = readvec(filename, 129);
     uint64_t size = mat.size();
     uint32_t dim = mat.at(5).size() - 1;
