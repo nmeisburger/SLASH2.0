@@ -1,4 +1,4 @@
-#define NUM_TABLES 100
+#define NUM_TABLES 50
 #define NUM_HASHES 16
 #define RESERVOIR_SIZE 100
 #define RANGE_POW 16
