@@ -36,10 +36,6 @@ void Slash::storevec(string filename, size_t sample) {
   uint64_t size = mat.size();
   uint32_t dim = mat.at(0).size();
   cout << "size: " << size << "  dimension " << dim << endl;
-  cout << "test vector: ";
-  for (auto i : mat.at(5)) {
-    cout << i << " ";
-  }
   // Sample to get mean. Coco_vector: 27M vectors
   float *sumvec = new float[128];
   
@@ -76,12 +72,16 @@ void Slash::storevec(string filename, size_t sample) {
     
       if (imgID % 100 == 0 && x % 350 == 0 ) {cout << "at image " << imgID << " vector: " << x << endl;}
 
+      cout << "test vector: ";
+      for (auto i : single) {
+        cout << i << " ";
+      }
       unsigned int hash = 0;
       for(int m = 0; m < numTables_; m++) {
 
           srpHash *_srp = _storesrp.at(m);
           unsigned int *hashcode = _srp->getHash(single, 450);
-          cout << "Hash code:  ";
+          cout << endl; << "Hash code:  ";
           for (int l = 0; l < K_; l++) {cout << hashcode[l] << " ";}
           cout << endl;
 
@@ -94,7 +94,7 @@ void Slash::storevec(string filename, size_t sample) {
 
           // TODO: This one line can be deleted.
           hashlst[m] = hash;
-          cout << 'id: ' << imgID << " hash value: " << hash << endl;
+          cout << "id: " << imgID << " hash value: " << hash << endl;
 
           hashes[x * numTables_ + m] = hash;
           delete [] hashcode;
