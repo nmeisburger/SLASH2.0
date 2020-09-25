@@ -1,6 +1,6 @@
 #define NUM_TABLES 100
 #define NUM_HASHES 16
-#define RESERVOIR_SIZE 1000
+#define RESERVOIR_SIZE 100
 #define RANGE_POW 16
 #define BETA1 0.9
 #define BETA2 0.9
