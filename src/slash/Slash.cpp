@@ -37,7 +37,7 @@ void Slash::storevec(string filename, size_t sample) {
   uint32_t dim = mat.at(0).size();
   cout << "size: " << size << "  dimension " << dim << endl;
   cout << "test vector: ";
-  for (auto i : mat.at(0)) {
+  for (auto i : mat.at(5)) {
     cout << i << " ";
   }
   // Sample to get mean. Coco_vector: 27M vectors
@@ -108,7 +108,7 @@ void Slash::storevec(string filename, size_t sample) {
 vector<uint32_t> Slash::query(string filename){
     vector<vector<float>> mat = readvec(filename, 129);
     uint64_t size = mat.size();
-    uint32_t dim = mat.at(0).size() - 1;
+    uint32_t dim = mat.at(5).size() - 1;
     cout << "size: " << size << "  dimension " << dim << endl;
     cout << "test vector: ";
     for (auto i : mat.at(0)) {
