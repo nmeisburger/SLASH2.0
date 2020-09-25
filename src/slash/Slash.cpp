@@ -81,7 +81,7 @@ void Slash::storevec(string filename, size_t sample) {
 
           srpHash *_srp = _storesrp.at(m);
           unsigned int *hashcode = _srp->getHash(single, 450);
-          cout << endl; << "Hash code:  ";
+          cout << endl << "Hash code:  ";
           for (int l = 0; l < K_; l++) {cout << hashcode[l] << " ";}
           cout << endl;
 
