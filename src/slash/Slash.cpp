@@ -38,10 +38,10 @@ void Slash::storevec(string filename, size_t sample) {
   cout << "size: " << size << "  dimension " << dim << endl;
   // Sample to get mean. Coco_vector: 27M vectors
   float *sumvec = new float[128];
-  cout << "First test vector: ";
-  for (auto i : mat.at(8)) {
-    cout << i << " ";
-  }
+  // cout << "First test vector: ";
+  // for (auto i : mat.at(8)) {
+  //   cout << i << " ";
+  // }
   
   for (int n = 0; n < (dim - 1); n++) { // The vectors have image IDs attached at the end
     sumvec[n] = 0.0;
@@ -57,13 +57,13 @@ void Slash::storevec(string filename, size_t sample) {
   for (int j = 0; j < dim; j++) {
     _meanvec.push_back(sumvec[j]/(size/sample));
   }
-  cout << endl << "mean calculated. Begin hashing. Mean: " << endl;
+  cout << endl << "mean calculated. Begin hashing." << endl;
 
-  cout << "test mean vector: ";
-  for (auto i : _meanvec) {
-    cout << i << " ";
-  }
-  cout << endl;
+  // cout << "test mean vector: ";
+  // for (auto i : _meanvec) {
+  //   cout << i << " ";
+  // }
+  // cout << endl;
 
   // SRP hash & store
   uint32_t *ids = new uint32_t[size];
@@ -75,11 +75,11 @@ void Slash::storevec(string filename, size_t sample) {
 
       vector<float> single = mat.at(x);
 
-      cout << "test vector 2: ";
-      for (auto i : single) {
-        cout << i << " ";
-      }
-      cout << endl;
+      // cout << "test vector 2: ";
+      // for (auto i : single) {
+      //   cout << i << " ";
+      // }
+      // cout << endl;
 
       unsigned int imgID = single.back();
       single.pop_back();
@@ -88,18 +88,18 @@ void Slash::storevec(string filename, size_t sample) {
     
       if (imgID % 100 == 0 && x % 350 == 0 ) {cout << "at image " << imgID << " vector: " << x << endl;}
 
-      cout << "test vector 3: ";
-      for (auto i : single) {
-        cout << i << " ";
-      }
+      // cout << "test vector 3: ";
+      // for (auto i : single) {
+      //   cout << i << " ";
+      // }
       unsigned int hash = 0;
       for(int m = 0; m < numTables_; m++) {
 
           srpHash *_srp = _storesrp.at(m);
           unsigned int *hashcode = _srp->getHash(single, 450);
-          cout << endl << "Hash code:  ";
-          for (int l = 0; l < K_; l++) {cout << hashcode[l] << " ";}
-          cout << endl;
+          // cout << endl << "Hash code:  ";
+          // for (int l = 0; l < K_; l++) {cout << hashcode[l] << " ";}
+          // cout << endl;
 
           hash = 0;
 
@@ -110,7 +110,7 @@ void Slash::storevec(string filename, size_t sample) {
 
           // TODO: This one line can be deleted.
           hashlst[m] = hash;
-          cout << "id: " << imgID << " hash value: " << hash << endl;
+          // cout << "id: " << imgID << " hash value: " << hash << endl;
 
           hashes[x * numTables_ + m] = hash;
           delete [] hashcode;
@@ -133,10 +133,10 @@ vector<uint32_t> Slash::query(string filename){
     uint64_t size = mat.size();
     uint32_t dim = mat.at(5).size() - 1;
     cout << "size: " << size << "  dimension " << dim << endl;
-    cout << "test vector: ";
-    for (auto i : mat.at(0)) {
-    cout << i << " ";
-    }
+    // cout << "test vector: ";
+    // for (auto i : mat.at(0)) {
+    // cout << i << " ";
+    // }
     // TODO: Check that the first vector is read. 
 
     unordered_map<unsigned int, int> score;
