@@ -5,7 +5,7 @@
 #SBATCH -p scavenge
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=20G
+#SBATCH --mem=40G
 #SBATCH --time=03:02:00
 #SBATCH --mail-user=jz77@rice.edu
 #SBATCH --mail-type=all
