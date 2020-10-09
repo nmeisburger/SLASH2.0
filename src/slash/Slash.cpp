@@ -174,7 +174,7 @@ vector<uint32_t> Slash::query(string filename){
       if (x > 0 && (x+1) % NUM_FEATURE == 0){
           cout << "Querying id: " << queryID << endl;
           unordered_map<unsigned int, int> score;
-          cout << "Initializing" << endl;
+          // cout << "Initializing" << endl;
           uint32_t **retrieved = lsh_-> queryReservoirs(350, queries);
           // cout << "Before updating score" << endl;
           for (int i = 0; i < numTables_ * NUM_FEATURE; i++) {
