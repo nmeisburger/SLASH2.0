@@ -177,32 +177,31 @@ vector<uint32_t> Slash::query(string filename){
           // cout << "Initializing" << endl;
           uint32_t **retrieved = lsh_-> queryReservoirs(350, queries);
           // cout << "Before updating score" << endl;
-          for (int i = 0; i < numTables_ * NUM_FEATURE; i++) {
-              // TODO: Change the siezeof.
-              for (int j = 0; j < RESERVOIR_SIZE; j++) {
-                  if (retrieved[i][j] == LSH::Empty) {continue;}
+          // for (int i = 0; i < numTables_ * NUM_FEATURE; i++) {
+          //     for (int j = 0; j < RESERVOIR_SIZE; j++) {
+          //         if (retrieved[i][j] == LSH::Empty) {continue;}
 
-                  if (score.count(retrieved[i][j]) == 0) {
-                      score[retrieved[i][j]] = 0;
-                  }
-                  else {
-                      score[retrieved[i][j]] ++;
-                  }
+          //         if (score.count(retrieved[i][j]) == 0) {
+          //             score[retrieved[i][j]] = 0;
+          //         }
+          //         else {
+          //             score[retrieved[i][j]] ++;
+          //         }
 
-              }
-          }
+          //     }
+          // }
           cout << "Score updated" << endl;
-          vector<pair<unsigned int, unsigned int> > freq_arr(score.begin(), score.end());
-          sort(freq_arr.begin(), freq_arr.end(), comparePair());
+          // vector<pair<unsigned int, unsigned int> > freq_arr(score.begin(), score.end());
+          // sort(freq_arr.begin(), freq_arr.end(), comparePair());
 
-          score.clear();
-          if (freq_arr[0].first == -1) {
-                cout << "Hit -1 :( Most match score is: " << freq_arr[1].second << endl;
-                result.push_back(freq_arr[1].first);
-          }
-          cout << endl << "Most match score is: " << freq_arr[0].second << endl;
-          result.push_back(freq_arr[0].first);
-          count ++;
+          // score.clear();
+          // if (freq_arr[0].first == -1) {
+          //       cout << "Hit -1 :( Most match score is: " << freq_arr[1].second << endl;
+          //       result.push_back(freq_arr[1].first);
+          // }
+          // cout << endl << "Most match score is: " << freq_arr[0].second << endl;
+          // result.push_back(freq_arr[0].first);
+          // count ++;
           delete[] retrieved;
       }
     }
