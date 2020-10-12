@@ -6,12 +6,15 @@
 #include "assert.h"
 using namespace std;
 
-static vector<vector<float>> readvec(string inname, int dim) {
+static vector<vector<float>> readvec(string inname, int dim, uint64_t offset = 0, size_t blockSize = 1000000) {
+    int range = offset + blockSize;
+    uint64_t count = 0;
     string filename = inname;
     string line;
     vector<vector<float>> data;
     std::ifstream file(filename);
     while(getline(file, line)) {
+        if (count < offset || count > range) {continue;}
         vector<float> onevec;
         for (int i = 0; i < dim; i++) {
             float a;
@@ -19,6 +22,7 @@ static vector<vector<float>> readvec(string inname, int dim) {
             onevec.push_back(a);
         }
         data.push_back(onevec);
+        count++;
     }
     cout << "read done" << endl;
     return data;

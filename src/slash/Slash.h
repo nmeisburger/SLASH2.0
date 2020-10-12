@@ -89,7 +89,7 @@ class Slash {
   void store(const string filename, uint64_t numItems, uint64_t batchSize, uint32_t avgDim,
              uint64_t offset = 0);
   
-  void storevec(const string filename, size_t sample);
+  void storevec(const string filename, uint64_t numItems, size_t sample);
 
   vector<uint32_t> query(string filename);
 
