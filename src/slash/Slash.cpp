@@ -37,6 +37,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
   uint64_t myOffset = p.second[rank_];
 
   // Read vectors
+  cout << "Reading vectors from number " << myOffset << " to " << myOffset + myLen << endl;
   vector<vector<float>> mat = readvec(filename, 129, myOffset, myLen);
   uint64_t size = mat.size();
   uint32_t dim = mat.at(0).size() - 1;
@@ -132,7 +133,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
 
 vector<uint32_t> Slash::query(string filename){
 
-    lsh_-> view();
+    // lsh_-> view();
 
     vector<vector<float>> mat = readvec(filename, 129);
     uint64_t size = mat.size();
