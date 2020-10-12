@@ -37,11 +37,11 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
   uint64_t myOffset = p.second[rank_];
 
   // Read vectors
-  cout << "Reading vectors from number " << myOffset << " to " << myOffset + myLen << endl;
+  cout << "Node: " << rank_ << "Reading vectors from number " << myOffset << " to " << myOffset + myLen << endl;
   vector<vector<float>> mat = readvec(filename, 129, myOffset, myLen);
   uint64_t size = mat.size();
   uint32_t dim = mat.at(0).size() - 1;
-  cout << "size: " << size << "  dimension " << dim << endl;
+  cout << "Node: " << rank_ << "size: " << size << "  dimension " << dim << endl;
   // Sample to get mean. Coco_vector: 27M vectors
   float *sumvec = new float[128];
   // cout << "First test vector: ";
@@ -63,7 +63,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
   for (int j = 0; j < dim; j++) {
     _meanvec.push_back(sumvec[j]/(size/sample));
   }
-  cout << endl << "mean calculated. Begin hashing." << endl;
+  cout << endl << "Node: " << rank_  << " mean calculated. Begin hashing." << endl;
 
   // cout << "test mean vector: ";
   // for (auto i : _meanvec) {
@@ -92,7 +92,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
       
       single = vecminus(single, _meanvec, dim);
     
-      if (imgID % 100 == 0 && x % 350 == 0 ) {cout << "at image " << imgID << " vector: " << x << endl;}
+      if (imgID % 100 == 0 && x % 350 == 0 ) {cout << "Node: " << rank_ << " at image " << imgID << " vector: " << x << endl;}
 
       // cout << "test vector 3: ";
       // for (auto i : single) {
@@ -124,10 +124,10 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
 
       ids[x] = imgID;
    }
-   cout << "Hash done, inserting next" << endl;
+   cout << "Node: " << rank_ << " Hash done, inserting next" << endl;
 
    lsh_-> insertBatch(size, ids, hashes);
-   cout << "insert done" << endl;
+   cout << "Node: " << rank_ << " insert done" << endl;
 
 }
 
@@ -138,7 +138,7 @@ vector<uint32_t> Slash::query(string filename){
     vector<vector<float>> mat = readvec(filename, 129);
     uint64_t size = mat.size();
     uint32_t dim = mat.at(5).size() - 1;
-    cout << "size: " << size << "  dimension " << dim << endl;
+    cout << "Node: " << rank_ << " size: " << size << "  dimension " << dim << endl;
     // cout << "test vector: ";
     // for (auto i : mat.at(0)) {
     // cout << i << " ";
@@ -178,7 +178,7 @@ vector<uint32_t> Slash::query(string filename){
       
       // When the vectors belonging to one image is processed. 
       if (x > 0 && (x+1) % NUM_FEATURE == 0){
-          cout << "Querying id: " << queryID << endl;
+          cout << "Node: " << rank_ << " Querying id: " << queryID << endl;
           unordered_map<unsigned int, int> score;
           // cout << "Initializing" << endl;
           uint32_t **retrieved = lsh_-> queryReservoirs(350, queries);
@@ -196,7 +196,7 @@ vector<uint32_t> Slash::query(string filename){
 
               }
           }
-          cout << "Score updated" << endl;
+          cout << "Node: " << rank_ << " Score updated" << endl;
           vector<pair<unsigned int, unsigned int> > freq_arr(score.begin(), score.end());
           sort(freq_arr.begin(), freq_arr.end(), comparePair());
 
@@ -205,7 +205,7 @@ vector<uint32_t> Slash::query(string filename){
                 cout << "Hit -1 :( Most match score is: " << freq_arr[1].second << endl;
                 result.push_back(freq_arr[1].first);
           }
-          cout << endl << "Most match score is: " << freq_arr[0].second << endl;
+          cout << endl << "Node: " << rank_ << " Most match score is: " << freq_arr[0].second << endl;
           result.push_back(freq_arr[0].first);
           count ++;
           delete[] retrieved;
