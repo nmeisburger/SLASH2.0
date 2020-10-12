@@ -14,7 +14,10 @@ static vector<vector<float>> readvec(string inname, int dim, uint64_t offset = 0
     vector<vector<float>> data;
     std::ifstream file(filename);
     while(getline(file, line)) {
-        if (count < offset || count > range) {continue;}
+        if (count < offset || count > range) {
+            count++;
+            continue;
+        }
         vector<float> onevec;
         for (int i = 0; i < dim; i++) {
             float a;

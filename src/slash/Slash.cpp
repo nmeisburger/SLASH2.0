@@ -37,11 +37,11 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
   uint64_t myOffset = p.second[rank_];
 
   // Read vectors
-  cout << "Node: " << rank_ << "Reading vectors from number " << myOffset << " to " << myOffset + myLen << endl;
+  cout << "Node: " << rank_ << " Reading vectors from number " << myOffset << " to " << myOffset + myLen << endl;
   vector<vector<float>> mat = readvec(filename, 129, myOffset, myLen);
   uint64_t size = mat.size();
   uint32_t dim = mat.at(0).size() - 1;
-  cout << "Node: " << rank_ << "size: " << size << "  dimension " << dim << endl;
+  cout << "Node: " << rank_ << " size: " << size << "  dimension " << dim << endl;
   // Sample to get mean. Coco_vector: 27M vectors
   float *sumvec = new float[128];
   // cout << "First test vector: ";
