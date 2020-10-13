@@ -67,7 +67,7 @@ class Slash {
     return {lens, offsets};
   }
 
-  inline pair<uint32_t *, uint32_t *> partition_query(uint64_t n, uint64_t num_feature uint64_t offset = 0) {
+  inline pair<uint32_t *, uint32_t *> partition_query(uint64_t n, uint64_t num_feature, uint64_t offset = 0) {
     uint32_t *lens = new uint32_t[worldSize_];
     uint32_t *offsets = new uint32_t[worldSize_];
 
@@ -81,7 +81,7 @@ class Slash {
       }
     }
 
-    offset[0] = offset;
+    offsets[0] = offset;
     for (int i = 1; i < worldSize_; i++) {
       offsets[i] = offsets[i - 1] + lens[i - 1];
     }
