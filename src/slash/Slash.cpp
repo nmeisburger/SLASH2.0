@@ -141,7 +141,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
     vector<vector<float>> mat = readvec(filename, 129, myOffset, myLen);
     uint64_t size = mat.size();
     uint32_t dim = mat.at(5).size() - 1;
-    cout << "Node: " << rank_ << " size: " << size << "  dimension " << dim << endl;
+    cout << "[Query] Node: " << rank_ << " size: " << size << "  dimension " << dim << endl;
     // cout << "test vector: ";
     // for (auto i : mat.at(0)) {
     // cout << i << " ";
@@ -221,7 +221,7 @@ void Slash::multiStore(vector<string> &&filenames, uint64_t numItemsPerFile, uin
                        uint64_t batchSize) {
   auto start = chrono::system_clock::now();
 
-  auto filePartition = partition(filenames.size());
+  auto filePartition = partition_query(filenames.size(), NUM_FEATURE);
 
   uint64_t numFiles = filePartition.first[rank_];
   uint64_t fileOffset = filePartition.second[rank_];
