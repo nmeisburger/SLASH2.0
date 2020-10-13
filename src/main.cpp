@@ -37,11 +37,14 @@ int main(int argc, char *argv[]) {
   // string coco_file = "../../coco_vectors_350.txt"; // Stored on NOTS
   string coco_file = "../../small_coco_train.txt";
   // vector<vector<float>> mat = readvec(coco_file);
+  
   Slash s(NUM_TABLES, RANGE_POW, RESERVOIR_SIZE, RANGE_POW);
   s.storevec(coco_file, 3500, 1);
+
   string query_file = "../../small_coco_val.txt";
   // string query_file = "../../coco_vectors_val_350.txt";
-  vector<uint32_t> result = s.query(query_file);
+
+  vector<uint32_t> result = s.query(query_file, 1750);
   cout << "Query id results:" << endl;
   for (auto i: result) {
     cout << i << " ";

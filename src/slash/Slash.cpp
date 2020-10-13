@@ -131,7 +131,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
 
 }
 
-vector<uint32_t> Slash::query(string filename){
+vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
     // lsh_-> view();
     auto p = partition(numItems);
