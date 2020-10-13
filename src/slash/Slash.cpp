@@ -134,8 +134,11 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
 vector<uint32_t> Slash::query(string filename){
 
     // lsh_-> view();
+    auto p = partition(numItems);
+    uint64_t myLen = p.first[rank_];
+    uint64_t myOffset = p.second[rank_];
 
-    vector<vector<float>> mat = readvec(filename, 129);
+    vector<vector<float>> mat = readvec(filename, 129, myOffset, myLen);
     uint64_t size = mat.size();
     uint32_t dim = mat.at(5).size() - 1;
     cout << "Node: " << rank_ << " size: " << size << "  dimension " << dim << endl;

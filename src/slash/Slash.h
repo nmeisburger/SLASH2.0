@@ -67,6 +67,27 @@ class Slash {
     return {lens, offsets};
   }
 
+  inline pair<uint32_t *, uint32_t *> partition_query(uint64_t n, uint64_t num_feature uint64_t offset = 0) {
+    uint32_t *lens = new uint32_t[worldSize_];
+    uint32_t *offsets = new uint32_t[worldSize_];
+
+    uint32_t num = n / num_feature;
+    uint32_t baselen = num / worldSize_;
+    uint32_t r = baselen % worldSize_;
+    for (int i = 0; i < worldSize_; i++) {
+      lens[i] = baselen * num_feature;
+      if (i < r) {
+        lens[i] += num_feature;
+      }
+    }
+
+    offset[0] = offset;
+    for (int i = 1; i < worldSize_; i++) {
+      offsets[i] = offsets[i - 1] + lens[i - 1];
+    }
+    return {lens, offsets};
+  }
+
  public:
   Slash(uint64_t numTables, uint64_t k, uint64_t reservoirSize, uint64_t rangePow)
       : numTables_(numTables), reservoirSize_(reservoirSize), rangePow_(rangePow), K_(k) {
