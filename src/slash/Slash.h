@@ -52,7 +52,7 @@ class Slash {
     uint32_t *offsets = new uint32_t[worldSize_];
 
     uint32_t baselen = n / worldSize_;
-    uint32_t r = baselen % worldSize_;
+    uint32_t r = n % worldSize_;
     for (int i = 0; i < worldSize_; i++) {
       lens[i] = baselen;
       if (i < r) {
@@ -73,7 +73,7 @@ class Slash {
 
     uint32_t num = n / num_feature;
     uint32_t baselen = num / worldSize_;
-    uint32_t r = baselen % worldSize_;
+    uint32_t r = num % worldSize_;
     for (int i = 0; i < worldSize_; i++) {
       lens[i] = baselen * num_feature;
       if (i < r) {
