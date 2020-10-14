@@ -134,7 +134,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
 vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
     // lsh_-> view();
-    auto p = partition_query(numItems);
+    auto p = partition_query(numItems, NUM_FEATURE);
     uint64_t myLen = p.first[rank_];
     uint64_t myOffset = p.second[rank_];
 
@@ -221,7 +221,7 @@ void Slash::multiStore(vector<string> &&filenames, uint64_t numItemsPerFile, uin
                        uint64_t batchSize) {
   auto start = chrono::system_clock::now();
 
-  auto filePartition = partition(filenames.size(), NUM_FEATURE);
+  auto filePartition = partition(filenames.size());
 
   uint64_t numFiles = filePartition.first[rank_];
   uint64_t fileOffset = filePartition.second[rank_];
