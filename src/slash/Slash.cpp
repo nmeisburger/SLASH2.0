@@ -208,7 +208,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                 cout << "Hit -1 :( Most match score is: " << freq_arr[1].second << endl;
                 result.push_back(freq_arr[1].first);
           }
-          cout << endl << "Node: " << rank_ << " Most match score is: " << freq_arr[0].second << endl;
+          cout  << "Node: " << rank_ << " Querying id: " << queryID <<  " Match ID is: " << freq_arr[0].first << " Most match score is: " << freq_arr[0].second << endl << endl;
           result.push_back(freq_arr[0].first);
           count ++;
           delete[] retrieved;
