@@ -134,11 +134,11 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
 vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
     // lsh_-> view();
-    auto p = partition_query(numItems, NUM_FEATURE);
-    uint64_t myLen = p.first[rank_];
-    uint64_t myOffset = p.second[rank_];
+    // auto p = partition_query(numItems, NUM_FEATURE);
+    // uint64_t myLen = p.first[rank_];
+    // uint64_t myOffset = p.second[rank_];
 
-    vector<vector<float>> mat = readvec(filename, 129, myOffset, myLen);
+    vector<vector<float>> mat = readvec(filename, 129);
     uint64_t size = mat.size();
     uint32_t dim = mat.at(5).size() - 1;
     cout << "[Query] Node: " << rank_ << " size: " << size << "  dimension " << dim << endl;
@@ -201,6 +201,17 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
           }
           cout << "Node: " << rank_ << " Score updated" << endl;
           vector<pair<unsigned int, unsigned int> > freq_arr(score.begin(), score.end());
+          //TODO: Merge the maps of all the Nodes. 
+          // First convert the map to normal array.
+          unsigned int arr_size = freq_arr.size() * 2;
+          unsigned int *send_buf = unsigned int[arr_size];
+          
+          for (int i = 0; i < freq_arr.size(); i++) {
+              unsigned int inx = 2 * i - 1;
+              
+          }
+
+
           sort(freq_arr.begin(), freq_arr.end(), comparePair());
 
           score.clear();

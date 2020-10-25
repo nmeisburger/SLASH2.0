@@ -6,7 +6,7 @@
 #include "assert.h"
 using namespace std;
 
-static vector<vector<float>> readvec(string inname, int dim, uint64_t offset = 0, size_t blockSize = 1000000) {
+static vector<vector<float>> readvec(string inname, int dim, uint64_t offset = 0, size_t blockSize = 10000000) {
     int range = offset + blockSize;
     uint64_t count = 0;
     string filename = inname;

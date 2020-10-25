@@ -34,12 +34,12 @@ int main(int argc, char *argv[]) {
 //   similarityMetric(data.indices, data.values, data.markers, data.indices, data.values,
 //                    data.markers + 100, query, 100, 32, nlist, 5);
 
-  // string coco_file = "../../coco_vectors_350.txt"; // Stored on NOTS
-  string coco_file = "../../small_coco_train.txt";
+  string coco_file = "../../coco_vectors_350.txt"; // Stored on NOTS
+  // string coco_file = "../../small_coco_train.txt";
   // vector<vector<float>> mat = readvec(coco_file);
   
   Slash s(NUM_TABLES, RANGE_POW, RESERVOIR_SIZE, RANGE_POW);
-  s.storevec(coco_file, 3500, 1);
+  s.storevec(coco_file, 3500, 200);
 
   string query_file = "../../small_coco_val.txt";
   // string query_file = "../../coco_vectors_val_350.txt";
