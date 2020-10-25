@@ -156,74 +156,116 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
     int count = 0;
 
     for (int x = 0; x < mat.size(); x++) {
-       vector<float> queryvec = mat.at(x);
-       unsigned int queryID = queryvec.back();
-       queryvec.pop_back();
+            vector<float> queryvec = mat.at(x);
+            unsigned int queryID = queryvec.back();
+            queryvec.pop_back();
 
-       queryvec = vecminus(queryvec, _meanvec, dim);
+            queryvec = vecminus(queryvec, _meanvec, dim);
 
-       unsigned int hash = 0;
-       for (int m = 0; m < numTables_; m++) {
-          srpHash *_srp = _storesrp.at(m);
-          unsigned int *hashcode = _srp->getHash(queryvec, 450);
+            unsigned int hash = 0;
+            for (int m = 0; m < numTables_; m++) {
+                    srpHash *_srp = _storesrp.at(m);
+                    unsigned int *hashcode = _srp->getHash(queryvec, 450);
 
-          hash = 0;
-          // Convert to integer
-          for (int n = 0; n < K_; n++) {
-          hash += hashcode[n] * pow(2, (_srp->_numhashes - n - 1));
-          }
+                    hash = 0;
+                    // Convert to integer
+                    for (int n = 0; n < K_; n++) {
+                            hash += hashcode[n] * pow(2, (_srp->_numhashes - n - 1));
+                    }
 
-          // See range
+                    // See range
 
-          queries[(x % 350) * numTables_ + m] = hash;
-          delete[] hashcode;
-       }
-      
-      // When the vectors belonging to one image is processed. 
-      if (x > 0 && (x+1) % NUM_FEATURE == 0){
-          cout << "Node: " << rank_ << " Querying id: " << queryID << endl;
-          unordered_map<unsigned int, int> score;
-          // cout << "Initializing" << endl;
-          uint32_t **retrieved = lsh_-> queryReservoirs(350, queries);
-          // cout << "Before updating score" << endl;
-          for (int i = 0; i < numTables_ * NUM_FEATURE; i++) {
-              for (int j = 0; j < RESERVOIR_SIZE; j++) {
-                  if (retrieved[i][j] == LSH::Empty) {continue;}
+                    queries[(x % 350) * numTables_ + m] = hash;
+                    delete[] hashcode;
+            }
 
-                  if (score.count(retrieved[i][j]) == 0) {
-                      score[retrieved[i][j]] = 0;
-                  }
-                  else {
-                      score[retrieved[i][j]] ++;
-                  }
+            // When the vectors belonging to one image is processed.
+            if (x > 0 && (x + 1) % NUM_FEATURE == 0) {
+                    cout << "Node: " << rank_ << " Querying id: " << queryID << endl;
+                    unordered_map<unsigned int, int> score;
+                    // cout << "Initializing" << endl;
+                    uint32_t **retrieved = lsh_->queryReservoirs(350, queries);
+                    // cout << "Before updating score" << endl;
+                    for (int i = 0; i < numTables_ * NUM_FEATURE; i++) {
+                            for (int j = 0; j < RESERVOIR_SIZE; j++) {
+                                    if (retrieved[i][j] == LSH::Empty) { continue; }
 
-              }
-          }
-          cout << "Node: " << rank_ << " Score updated" << endl;
-          vector<pair<unsigned int, unsigned int> > freq_arr(score.begin(), score.end());
-          //TODO: Merge the maps of all the Nodes. 
-          // First convert the map to normal array.
-          unsigned int arr_size = freq_arr.size() * 2;
-          unsigned int *send_buf = unsigned int[arr_size];
-          
-          for (int i = 0; i < freq_arr.size(); i++) {
-              unsigned int inx = 2 * i - 1;
-              
-          }
+                                    if (score.count(retrieved[i][j]) == 0) {
+                                            score[retrieved[i][j]] = 0;
+                                    } else {
+                                            score[retrieved[i][j]]++;
+                                    }
+
+                            }
+                    }
+                    cout << "Node: " << rank_ << " Score updated" << endl;
+                    vector <pair<unsigned int, unsigned int>> freq_arr(score.begin(), score.end());
+                    //Merge the maps of all the Nodes.
+                    // First convert the map to normal array.
+                    unsigned int arr_size = freq_arr.size() * 2;
+                    unsigned int *send_buf = new unsigned int[arr_size];
+
+                    for (int i = 0; i < freq_arr.size(); i++) {
+                            unsigned int idx = 2 * i - 1;
+                            send_buf[idx] = freq_arr.at(i).first;
+                            send_buf[idx + 1] = freq_arr.at(i).second;
+                    }
+
+                    // Send the sizes of each map first
+                    unsigned int *rec_size_buf = new unsigned int[worldSize_];
+                    unsigned int *send_size_buf = new unsigned int[1];
+                    send_size_buf[0] = freq_arr.size() * 2;
+                    MPI_Gather(send_size_buf, worldSize_, MPI_UNSIGNED, rec_size_buf, worldSize_, MPI_UNSIGNED, 0,
+                               MPI_COMM_WORLD);
+
+                    unsigned int total = 0;
+                    for (int i = 0; i < worldSize_; i++) {
+                            total += rec_size_buf[i];
+                    }
+                    unsigned int *rec_buf = new unsigned int[total];
+                    // Define the array of offsets
+                    unsigned int *displs = new unsigned int[worldSize_];
+                    unsigned int add = 0;
+                    displs[0] = 0;
+                    if (rank_ == 0) {
+                            for (int x = 1; x < worldSize_; x++) {
+                                    add += rec_size_buf[x - 1];
+                                    displs[x] = add;
+                            }
+                    }
+
+                    // Gather all the maps to Node 0
+                    MPI_Gatherv(send_buf, worldSize_, MPI_UNSIGNED, rec_buf, rec_size_buf, displs, MPI_UNSIGNED, 0,
+                                MPI_COMM_WORLD);
+                    if (rank_ == 0) {
+
+                            unordered_map<unsigned int, unsigned int> new_score;
+                            for (int j = 0; j < total; j += 2) {
+                                    if (new_score.count(rec_buf[j]) == 0) {
+                                            new_score[rec_buf[j]] = rec_buf[j + 1];
+                                    } else {
+                                            new_score[rec_buf[j]] += rec_buf[j + 1];
+                                    }
+                            }
+                            vector <pair<unsigned int, unsigned int>> final_arr(new_score.begin(), new_score.end());
 
 
-          sort(freq_arr.begin(), freq_arr.end(), comparePair());
+                            sort(final_arr.begin(), final_arr.end(), comparePair());
 
-          score.clear();
-          if (freq_arr[0].first == -1) {
-                cout << "Hit -1 :( Most match score is: " << freq_arr[1].second << endl;
-                result.push_back(freq_arr[1].first);
-          }
-          cout  << "Node: " << rank_ << " Querying id: " << queryID <<  " Match ID is: " << freq_arr[0].first << " Most match score is: " << freq_arr[0].second << endl << endl;
-          result.push_back(freq_arr[0].first);
-          count ++;
-          delete[] retrieved;
-      }
+                            score.clear();
+                            new_score.clear();
+                            if (final_arr[0].first == -1) {
+                                    cout << "Hit -1 :( Most match score is: " << final_arr[1].second << endl;
+                                    result.push_back(final_arr[1].first);
+                            }
+                            cout << "Node: " << rank_ << " Querying id: " << queryID << " Match ID is: "
+                                 << final_arr[0].first << " Most match score is: " << final_arr[0].second << endl
+                                 << endl;
+                            result.push_back(final_arr[0].first);
+                            count++;
+                            delete[] retrieved;
+                    }
+            }
     }
     return result;
 }
