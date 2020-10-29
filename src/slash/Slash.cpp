@@ -229,12 +229,13 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
 
                     unsigned int *rec_buf;
+                    unsigned int total = 0;
                     // Define the array of offsets
                     int *displs = new int[worldSize_];
                     unsigned int add = 0;
                     displs[0] = 0;
                     if (rank_ == 0) {
-                            unsigned int total = 0;
+                            total = 0;
                             for (int i = 0; i < worldSize_; i++) {
                                     total += rec_size_buf[i];
                             }
