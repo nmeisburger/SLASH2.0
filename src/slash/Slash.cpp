@@ -198,7 +198,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
                             }
                     }
-                    cout << "Node: " << rank_ << " Score updated" << endl;
+                    cout << "Node: " << rank_ << " Score computed separately" << endl;
                     vector <pair<unsigned int, unsigned int>> freq_arr(score.begin(), score.end());
                     //Merge the maps of all the Nodes.
                     // First convert the map to normal array.
@@ -210,7 +210,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                             send_buf[idx] = freq_arr.at(i).first;
                             send_buf[idx + 1] = freq_arr.at(i).second;
                     }
-
+                    cout << "Node: " << rank_ << " Score converted to array" << endl;
                     // Send the sizes of each map first
                     int *rec_size_buf = new int[worldSize_];
                     unsigned int *send_size_buf = new unsigned int[1];
@@ -218,26 +218,44 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                     MPI_Gather(send_size_buf, worldSize_, MPI_UNSIGNED, rec_size_buf, worldSize_, MPI_UNSIGNED, 0,
                                MPI_COMM_WORLD);
 
-                    unsigned int total = 0;
-                    for (int i = 0; i < worldSize_; i++) {
-                            total += rec_size_buf[i];
+
+                    if (rank_ == 0) {
+                            cout << "!!!! Root Node received sizes:";
+                            for (int j = 0; j < worldSize_; j++) {
+                                    cout << rec_size_buf[j] << " ";
+                            }
+                            cout << endl;
                     }
-                    unsigned int *rec_buf = new unsigned int[total];
+
+
+                    unsigned int *rec_buf;
                     // Define the array of offsets
                     int *displs = new int[worldSize_];
                     unsigned int add = 0;
                     displs[0] = 0;
                     if (rank_ == 0) {
+                            unsigned int total = 0;
+                            for (int i = 0; i < worldSize_; i++) {
+                                    total += rec_size_buf[i];
+                            }
+                            rec_buf = new unsigned int[total];
                             for (int x = 1; x < worldSize_; x++) {
                                     add += rec_size_buf[x - 1];
                                     displs[x] = add;
                             }
+                            cout << "Node 0 rec buffer initialized" << endl;
                     }
 
-                    // Gather all the maps to Node 0
+                    // Gather all the scores to Node 0
                     MPI_Gatherv(send_buf, worldSize_, MPI_UNSIGNED, rec_buf, rec_size_buf, displs, MPI_UNSIGNED, 0,
                                 MPI_COMM_WORLD);
+
                     if (rank_ == 0) {
+                            cout << "!!!! Root Node received scores:";
+                            for (int m = 0; m < total; m++) {
+                                    cout << rec_size_buf[m] << " ";
+                            }
+                            cout << endl;
 
                             unordered_map<unsigned int, unsigned int> new_score;
                             for (int j = 0; j < total; j += 2) {
@@ -248,7 +266,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                                     }
                             }
                             vector <pair<unsigned int, unsigned int>> final_arr(new_score.begin(), new_score.end());
-
+                            cout << "Root Node final score vector computed";
 
                             sort(final_arr.begin(), final_arr.end(), comparePair());
 
