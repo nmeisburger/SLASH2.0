@@ -30,7 +30,7 @@ void Slash::store(const string filename, uint64_t numItems, uint64_t batchSize, 
        << endl;
 }
 
-void Slash::storevec(string filename, uint64_t numItems,  size_t sample = 1) {
+void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
   // Divide up the work
   auto p = partition(numItems);
   uint64_t myLen = p.first[rank_];
