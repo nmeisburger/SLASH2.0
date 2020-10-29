@@ -212,7 +212,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                     }
 
                     // Send the sizes of each map first
-                    unsigned int *rec_size_buf = new unsigned int[worldSize_];
+                    int *rec_size_buf = new int[worldSize_];
                     unsigned int *send_size_buf = new unsigned int[1];
                     send_size_buf[0] = freq_arr.size() * 2;
                     MPI_Gather(send_size_buf, worldSize_, MPI_UNSIGNED, rec_size_buf, worldSize_, MPI_UNSIGNED, 0,
@@ -224,7 +224,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                     }
                     unsigned int *rec_buf = new unsigned int[total];
                     // Define the array of offsets
-                    unsigned int *displs = new unsigned int[worldSize_];
+                    int *displs = new int[worldSize_];
                     unsigned int add = 0;
                     displs[0] = 0;
                     if (rank_ == 0) {
