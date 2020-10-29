@@ -203,10 +203,11 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                     //Merge the maps of all the Nodes.
                     // First convert the map to normal array.
                     unsigned int arr_size = freq_arr.size() * 2;
+//                    cout << "Node: " << " Inializing array"<< endl;
                     unsigned int *send_buf = new unsigned int[arr_size];
 
                     for (int i = 0; i < freq_arr.size(); i++) {
-                            unsigned int idx = 2 * i - 1;
+                            unsigned int idx = 2 * i;
                             send_buf[idx] = freq_arr.at(i).first;
                             send_buf[idx + 1] = freq_arr.at(i).second;
                     }
