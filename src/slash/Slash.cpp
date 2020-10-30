@@ -133,7 +133,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
 
 vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
-    // lsh_-> view();
+     lsh_-> view();
     // auto p = partition_query(numItems, NUM_FEATURE);
     // uint64_t myLen = p.first[rank_];
     // uint64_t myOffset = p.second[rank_];
@@ -202,12 +202,13 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                     vector <pair<unsigned int, unsigned int>> freq_arr(score.begin(), score.end());
                     //Merge the maps of all the Nodes.
                     // First convert the map to normal array.
-                    unsigned int arr_size = freq_arr.size() * 2;
+                    int arr_size = freq_arr.size() * 2;
+                    cout << "Node: " << rank_ << " score map size: " << arr_size << endl;
 //                    cout << "Node: " << " Inializing array"<< endl;
                     unsigned int *send_buf = new unsigned int[arr_size];
 
                     for (int i = 0; i < freq_arr.size(); i++) {
-                            unsigned int idx = 2 * i;
+                            int idx = 2 * i;
                             send_buf[idx] = freq_arr.at(i).first;
                             send_buf[idx + 1] = freq_arr.at(i).second;
                     }
