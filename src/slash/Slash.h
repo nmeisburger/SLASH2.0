@@ -116,7 +116,7 @@ class Slash {
             srpHash *srp = new srpHash(128, k, 1, seeds[n]);
             _storesrp.push_back(srp);
     }
-
+    cout << "Node: " << rank_ << " have srp #: " << _storesrp.size();
     lsh_->checkRanges(0, 1000);
   }
 
