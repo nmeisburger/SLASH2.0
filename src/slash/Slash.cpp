@@ -133,7 +133,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
 
 vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
-     lsh_-> view();
+//     lsh_-> view();
     // auto p = partition_query(numItems, NUM_FEATURE);
     // uint64_t myLen = p.first[rank_];
     // uint64_t myOffset = p.second[rank_];
@@ -269,7 +269,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                                     }
                             }
                             vector <pair<unsigned int, unsigned int>> final_arr(new_score.begin(), new_score.end());
-                            cout << "Root Node final score vector computed";
+                            cout << "Root Node final score vector computed" << endl;
 
                             sort(final_arr.begin(), final_arr.end(), comparePair());
 

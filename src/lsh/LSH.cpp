@@ -106,7 +106,7 @@ uint32_t **LSH::queryReservoirs(uint64_t numItems, uint32_t *hashes) {
       rows[index] = reservoirs_[loc] + 1;
     }
   }
-  cout << "LSH Query Reservoir Done" << endl;
+//  cout << "LSH Query Reservoir Done" << endl;
   return rows;
 }
 
