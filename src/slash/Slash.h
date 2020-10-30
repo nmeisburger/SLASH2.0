@@ -97,7 +97,7 @@ class Slash {
     doph_ = std::make_unique<DOPH>(K_, numTables_, rangePow_, worldSize_, rank_);
 
     srand(time(0));
-    int *seeds = new int(numTables_)
+    int *seeds = new int(numTables_);
     //TODO: Broadcast the seeds from root Node;
     if (rank_ == 0) {
             for (int m = 0; m < numTables_; m++) {
