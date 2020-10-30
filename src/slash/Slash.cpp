@@ -215,9 +215,9 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                     cout << "Node: " << rank_ << " Score converted to array" << endl;
                     // Send the sizes of each map first
                     int *rec_size_buf = new int[worldSize_];
-                    unsigned int *send_size_buf = new unsigned int[1];
+                    int *send_size_buf = new int[1];
                     send_size_buf[0] = freq_arr.size() * 2;
-                    MPI_Gather(send_size_buf, worldSize_, MPI_UNSIGNED, rec_size_buf, worldSize_, MPI_UNSIGNED, 0,
+                    MPI_Gather(send_size_buf, 1, MPI_INT, rec_size_buf, 1, MPI_INT, 0,
                                MPI_COMM_WORLD);
 
 
@@ -250,13 +250,13 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                     }
 
                     // Gather all the scores to Node 0
-                    MPI_Gatherv(send_buf, worldSize_, MPI_UNSIGNED, rec_buf, rec_size_buf, displs, MPI_UNSIGNED, 0,
+                    MPI_Gatherv(send_buf, arr_size, MPI_UNSIGNED, rec_buf, rec_size_buf, displs, MPI_UNSIGNED, 0,
                                 MPI_COMM_WORLD);
 
                     if (rank_ == 0) {
                             cout << "!!!! Root Node received scores:";
-                            for (int m = 0; m < total; m++) {
-                                    cout << rec_size_buf[m] << " ";
+                            for (int m = 0; m < 20; m++) {
+                                    cout << rec_buf[m] << " ";
                             }
                             cout << endl;
 
