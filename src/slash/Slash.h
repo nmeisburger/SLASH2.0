@@ -97,20 +97,21 @@ class Slash {
     doph_ = std::make_unique<DOPH>(K_, numTables_, rangePow_, worldSize_, rank_);
 
     srand(time(0));
-    int *seeds = new int(numTables_);
+    int seeds[numTables_];
     //TODO: Broadcast the seeds from root Node;
     if (rank_ == 0) {
             for (int m = 0; m < numTables_; m++) {
                     seeds[m] = rand();
             }
+
+            MPI_Bcast(seeds, numTables_, MPI_INT, 0, MPI_COMM_WORLD);
     }
-    MPI_Bcast(seeds, numTables_, MPI_INT, 0, MPI_COMM_WORLD);
 //
-//    cout << "Node: " << rank_ << " have seeds: ";
-//    for (int j = 0; j < numTables_; j++) {
-//            cout << seeds[j] << " ";
-//    }
-//    cout << endl;
+    cout << "Node: " << rank_ << " have seeds: ";
+    for (int j = 0; j < numTables_; j++) {
+            cout << seeds[j] << " ";
+    }
+    cout << endl;
 
     for (int n = 0; n < numTables_; n++) {
             srpHash *srp = new srpHash(128, k, 1, rand());
