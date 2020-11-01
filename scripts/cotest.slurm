@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=slash-run
-#SBATCH --nodes=4
+#SBATCH --nodes=1
 #SBATCH -p scavenge
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4

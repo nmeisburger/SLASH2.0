@@ -44,10 +44,10 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
   cout << "Node: " << rank_ << " size: " << size << "  dimension " << dim << endl;
   // Sample to get mean. Coco_vector: 27M vectors
   float *sumvec = new float[128];
-  // cout << "First test vector: ";
-  // for (auto i : mat.at(8)) {
-  //   cout << i << " ";
-  // }
+   cout << "First test vector: ";
+   for (auto i : mat.at(8)) {
+     cout << i << " ";
+   }
   
   for (int n = 0; n < (dim - 1); n++) { // The vectors have image IDs attached at the end
     sumvec[n] = 0.0;
