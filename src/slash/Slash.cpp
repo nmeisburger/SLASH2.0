@@ -45,7 +45,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
   // Sample to get mean. Coco_vector: 27M vectors
   float *sumvec = new float[128];
    cout << "Last test vector: ";
-   for (auto i : mat.at(3499)) {
+   for (auto i : mat.at(3498)) {
      cout << i << " ";
    }
   
