@@ -113,10 +113,10 @@ class Slash {
     cout << endl;
 
     for (int n = 0; n < numTables_; n++) {
-            srpHash *srp = new srpHash(128, k, 1, seeds[n]);
+            srpHash *srp = new srpHash(128, k, 1, rand());
             _storesrp.push_back(srp);
     }
-    cout << "Node: " << rank_ << " have srp #: " << _storesrp.size();
+    cout << "Node: " << rank_ << " have srp #: " << _storesrp.size() << endl;
     lsh_->checkRanges(0, 1000);
   }
 
