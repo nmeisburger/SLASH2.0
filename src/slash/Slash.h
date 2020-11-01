@@ -104,7 +104,7 @@ class Slash {
                     seeds[m] = rand();
             }
     }
-//    MPI_Bcast(seeds, numTables_, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(seeds, numTables_, MPI_INT, 0, MPI_COMM_WORLD);
 //
 //    cout << "Node: " << rank_ << " have seeds: ";
 //    for (int j = 0; j < numTables_; j++) {
