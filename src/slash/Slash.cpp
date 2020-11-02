@@ -45,7 +45,7 @@ void Slash::storevec(string filename, uint64_t numItems,  size_t sample) {
   // Sample to get mean. Coco_vector: 27M vectors
   float *sumvec = new float[128];
    cout << "Last test vector: ";
-   for (auto i : mat.at(3500)) {
+   for (auto i : mat.at(3499)) {
      cout << i << " ";
    }
   
@@ -151,7 +151,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
     unordered_map<unsigned int, int> score;
     // Minus mean and query. 
     // uint32_t mark = 0;
-    uint32_t *queries = new uint32_t[numTables_ * 350];
+    uint32_t *queries = new uint32_t[numTables_ * NUM_FEATURE];
     vector<uint32_t> result;
     int count = 0;
 
@@ -182,6 +182,13 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
             // When the vectors belonging to one image is processed.
             if (x > 0 && (x + 1) % NUM_FEATURE == 0) {
                     cout << "Node: " << rank_ << " Querying id: " << queryID << endl;
+
+                    cout << "????? Retrieving query image ids";
+                    for (int m = 0; m < 2 * NUM_FEATURE; m++) {
+                            cout << queries[m] << " ";
+                    }
+                    cout << endl;
+
                     unordered_map<unsigned int, int> score;
                     // cout << "Initializing" << endl;
                     uint32_t **retrieved = lsh_->queryReservoirs(350, queries);
