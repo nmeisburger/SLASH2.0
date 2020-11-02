@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
   //TODO: Change the sample parameter every time
   s.storevec(coco_file, 3500);
 
-  string query_file = "../../small_coco_val.txt";
+  string query_file = "../../tiny_coco_val.txt";
   // string query_file = "../../coco_vectors_val_350.txt";
 
   vector<uint32_t> result = s.query(query_file, 1750);

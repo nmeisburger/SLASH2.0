@@ -175,7 +175,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
                     // See range
 
-                    queries[m * 350 + (x % 350)] = hash;
+                    queries[m * NUM_FEATURE + (x % NUM_FEATURE)] = hash;
                     delete[] hashcode;
             }
 
