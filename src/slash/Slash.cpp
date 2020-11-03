@@ -183,11 +183,11 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
             if (x > 0 && (x + 1) % NUM_FEATURE == 0) {
                     cout << "Node: " << rank_ << " Querying id: " << queryID << endl;
 
-                    cout << "????? Retrieving query image ids";
-                    for (int m = 0; m < 2 * NUM_FEATURE; m++) {
-                            cout << queries[m] << " ";
-                    }
-                    cout << endl;
+//                    cout << "????? Retrieving query image ids";
+//                    for (int m = 0; m < 2 * NUM_FEATURE; m++) {
+//                            cout << queries[m] << " ";
+//                    }
+//                    cout << endl;
 
                     unordered_map<unsigned int, int> score;
                     // cout << "Initializing" << endl;
@@ -280,7 +280,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
                             sort(final_arr.begin(), final_arr.end(), comparePair());
 
-                            score.clear();
+
                             new_score.clear();
                             if (final_arr[0].first == -1) {
                                     cout << "Hit -1 :( Most match score is: " << final_arr[1].second << endl;
@@ -293,6 +293,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                             count++;
                             delete[] retrieved;
                     }
+                    score.clear();
             }
     }
     return result;
