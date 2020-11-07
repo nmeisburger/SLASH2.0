@@ -181,7 +181,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
 
             // When the vectors belonging to one image is processed.
             if (x > 0 && (x + 1) % NUM_FEATURE == 0) {
-                    cout << "Node: " << rank_ << " Querying id: " << queryID << endl;
+                    cout << "Node: " << rank_ << " Querying id: " << queryID << " x = " << x << endl;
 
 //                    cout << "????? Retrieving query image ids";
 //                    for (int m = 0; m < 2 * NUM_FEATURE; m++) {
