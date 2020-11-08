@@ -174,7 +174,7 @@ vector<uint32_t> Slash::query(string filename, uint64_t numItems){
                     }
 
                     // See range
-                    cout << "=== The index ===" << m * NUM_FEATURE + (x % NUM_FEATURE) << endl;
+//                    cout << "=== The index ===" << m * NUM_FEATURE + (x % NUM_FEATURE) << endl;
                     queries[m * NUM_FEATURE + (x % NUM_FEATURE)] = hash;
                     delete[] hashcode;
             }
